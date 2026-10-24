@@ -6,6 +6,7 @@
 /* ---------- 主题变量 ---------- */
 body[data-theme="cyber"] {
     --bg: #0a0a12;
+    --bg-grad: radial-gradient(130% 100% at 50% -10%, #1a1840 0%, #0a0a12 58%);
     --bg-2: #12102a;
     --text-1: #f2f6ff;
     --text-2: rgba(242, 246, 255, 0.72);
@@ -27,6 +28,7 @@ body[data-theme="cyber"] {
 
 body[data-theme="minimal"] {
     --bg: #f7f7f4;
+    --bg-grad: radial-gradient(120% 100% at 50% -10%, #ffffff 0%, #f7f7f4 60%);
     --bg-2: #efefea;
     --text-1: #141414;
     --text-2: rgba(20, 20, 20, 0.66);
@@ -53,7 +55,7 @@ html { scroll-behavior: smooth; }
 
 body {
     font-family: var(--font-body);
-    background: var(--bg);
+    background: var(--bg-grad) fixed;
     color: var(--text-1);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
