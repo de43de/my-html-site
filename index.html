@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="dede 的个人主页 · 社交链接 / 常见问题 / 彩蛋" />
+    <meta name="description" content="dede 的个人主页" />
     <meta name="theme-color" content="#0f0c29" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
@@ -374,7 +374,7 @@
             color: var(--accent-1);
         }
 
-        /* ---------- 小游戏入口（占位，功能开发中） ---------- */
+        /* ---------- 小游戏入口 ---------- */
         .game-entry {
             display: flex;
             align-items: center;
@@ -955,8 +955,8 @@
             </div>
 
             <!-- 小游戏入口 -->
-            <div class="game-entry" id="gameEntry" role="button" tabindex="0" aria-label="打开俄罗斯方块小游戏">
-                <i class="fas fa-gamepad"></i> 小游戏 · 俄罗斯方块 <span class="badge">PLAY</span>
+            <div class="game-entry" id="gameEntry" role="button" tabindex="0" aria-label="打开俄罗斯方块">
+                <i class="fas fa-gamepad"></i> 俄罗斯方块 <span class="badge">PLAY</span>
             </div>
 
             <div class="qa-static">
@@ -1019,7 +1019,7 @@
                 <div class="pause-card">
                     <div class="pause-icon" id="pauseIcon"><i class="fas fa-pause"></i></div>
                     <div class="pause-text" id="pauseText">已暂停</div>
-                    <div class="pause-sub" id="pauseSub">按 P 或点击继续</div>
+                    <div class="pause-sub" id="pauseSub">按 P 继续</div>
                     <div class="pause-btns">
                         <button class="pause-btn" id="pauseResume"><i class="fas fa-play"></i> 继续</button>
                         <button class="pause-btn" id="pauseRestart"><i class="fas fa-redo"></i> 重新开始</button>
@@ -1254,7 +1254,7 @@
         document.querySelectorAll('.theme-option').forEach(opt => {
             function pick() {
                 applyTheme(opt.dataset.theme, true);
-                showToast('已切换主题 · ' + opt.querySelector('.name').textContent);
+                showToast('已切换主题：' + opt.querySelector('.name').textContent);
                 openPanel(false);
             }
             opt.addEventListener('click', pick);
@@ -1337,8 +1337,8 @@
             if (collides(cur.shape, cur.x, cur.y)) {
                 gameState = 'over';
                 pauseIcon.innerHTML = '<i class="fas fa-skull"></i>';
-                pauseText.textContent = '游戏结束 · 得分 ' + score;
-                pauseSub.textContent = '点击「重新开始」再来一局';
+                pauseText.textContent = '游戏结束，得分 ' + score;
+                pauseSub.textContent = '点「重新开始」再来一局';
                 pauseOverlay.classList.add('show');
             }
         }
@@ -1500,7 +1500,7 @@
                 gameState = 'paused';
                 pauseIcon.innerHTML = '<i class="fas fa-pause"></i>';
                 pauseText.textContent = '已暂停';
-                pauseSub.textContent = '按 P 或点击继续';
+                pauseSub.textContent = '按 P 继续';
                 pauseOverlay.classList.add('show');
             } else if (gameState === 'paused') {
                 gameState = 'running';
@@ -1622,7 +1622,7 @@
         function addQQFriend(qq) {
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
             // 未安装 QQ 时协议会静默失败，先把 QQ 号复制到剪贴板兜底
-            copyText(qq, 'QQ 号已复制：' + qq + '（若未唤起 QQ 可手动添加）');
+            copyText(qq, 'QQ 号已复制：' + qq);
             if (isMobile) {
                 window.location.href = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${qq}&card_type=person&source=sharecard`;
             } else {
@@ -1632,7 +1632,7 @@
 
         // ===== Steam 复制好友码 =====
         function copySteamID(id) {
-            copyText(id, '✅ Steam 好友码已复制：' + id);
+            copyText(id, 'Steam 好友码已复制：' + id);
         }
 
         // ============================================================
