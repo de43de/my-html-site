@@ -131,7 +131,6 @@
         themeToggle.innerHTML = isCyber ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
         themeToggle.title = isCyber ? '切换到极简' : '切换到赛博';
         themeColorMeta.setAttribute('content', isCyber ? '#0a0a12' : '#f7f7f4');
-        if (window.DEDE_SCENE) { window.DEDE_SCENE.setTheme(theme); }
         if (save) { try { localStorage.setItem('dede-theme-v3', theme); } catch (e) {} }
     }
 
