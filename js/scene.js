@@ -36,7 +36,7 @@
     const DYE_W = isMobile ? 256 : 512;
     const DYE_H = isMobile ? 256 : 512;
 
-    const DENSITY_DISSIPATION = 1.0;
+    const DENSITY_DISSIPATION = 1.5;
     const VELOCITY_DISSIPATION = 0.2;
     const PRESSURE = 0.8;
     const PRESSURE_ITERATIONS = 20;
@@ -47,11 +47,11 @@
     // ---------- 调色板 ----------
     const PALETTES = {
         cyber: [
-            [0.00, 0.90, 1.00],   // 青
-            [1.00, 0.18, 0.77],   // 洋红
-            [0.48, 0.36, 1.00],   // 紫
-            [0.18, 0.42, 1.00],   // 蓝
-            [0.00, 1.00, 0.60]    // 绿青
+            [0.05, 0.70, 0.85],   // 暗青
+            [0.80, 0.20, 0.60],   // 暗洋红
+            [0.40, 0.32, 0.80],   // 暗紫
+            [0.18, 0.38, 0.80],   // 暗蓝
+            [0.00, 0.75, 0.50]    // 暗绿青
         ],
         minimal: [
             [0.62, 0.76, 0.90],   // 淡蓝
@@ -65,7 +65,7 @@
 
     function pickColor() {
         const c = currentPalette[(Math.random() * currentPalette.length) | 0];
-        const jitter = 0.75 + Math.random() * 0.5;
+        const jitter = 0.6 + Math.random() * 0.35;
         return [c[0] * jitter, c[1] * jitter, c[2] * jitter];
     }
 
@@ -247,7 +247,8 @@
         'uniform sampler2D uTexture;',
         'void main () {',
         '  vec3 c = texture2D(uTexture, vUv).rgb;',
-        '  float a = clamp(dot(c, vec3(0.299, 0.587, 0.114)) * 2.0, 0.0, 1.0);',
+        '  c *= 0.9;',
+        '  float a = clamp(dot(c, vec3(0.299, 0.587, 0.114)) * 1.4, 0.0, 1.0);',
         '  gl_FragColor = vec4(c * a, a);',
         '}'
     ].join('\n');
