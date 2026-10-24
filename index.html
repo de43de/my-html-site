@@ -409,6 +409,189 @@
             border-radius: 20px;
         }
 
+        /* ---------- 俄罗斯方块游戏视图 ---------- */
+        .game-view {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(160deg, var(--bg-a), var(--bg-b));
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .game-view.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        body.game-open { overflow: hidden; }
+
+        .game-panel {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--card-radius);
+            backdrop-filter: var(--card-blur);
+            -webkit-backdrop-filter: var(--card-blur);
+            box-shadow: var(--card-shadow);
+            padding: 22px;
+        }
+        .game-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .game-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--item-bg);
+            color: var(--text-1);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 7px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .game-back:hover { background: var(--item-bg-hover); }
+        .game-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-1);
+        }
+        .game-title i { color: var(--accent-1); margin-right: 6px; }
+        .game-score {
+            font-size: 13px;
+            color: var(--text-3);
+        }
+        .game-score b {
+            color: var(--accent-1);
+            font-size: 18px;
+            margin-left: 4px;
+        }
+
+        .game-main {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+        .game-board-wrap {
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 6px;
+        }
+        #tetrisBoard {
+            display: block;
+            width: min(54vw, 280px);
+            height: auto;
+            border-radius: 8px;
+        }
+        .game-side {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 96px;
+        }
+        .game-side .side-box {
+            background: var(--item-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            color: var(--text-3);
+            font-size: 12px;
+        }
+        .game-side .side-box b {
+            display: block;
+            color: var(--text-1);
+            font-size: 20px;
+            margin-top: 2px;
+        }
+        #tetrisNext {
+            width: 60px;
+            height: 60px;
+            margin-top: 6px;
+        }
+
+        .game-controls {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .ctrl-btn {
+            background: var(--item-bg);
+            color: var(--text-1);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 0;
+            font-size: 16px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .ctrl-btn:active {
+            transform: scale(0.94);
+            background: var(--item-bg-hover);
+        }
+        .game-hint {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-4);
+        }
+
+        .game-pause {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: var(--card-radius);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+        .game-pause.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .pause-card { text-align: center; color: #ffffff; }
+        .pause-icon { font-size: 40px; margin-bottom: 10px; }
+        .pause-text { font-size: 20px; font-weight: 700; }
+        .pause-sub { font-size: 13px; opacity: 0.75; margin-top: 6px; }
+        .pause-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        .pause-btn {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 9px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .pause-btn:active { transform: scale(0.95); }
+
         /* ---------- QA ---------- */
         .qa-static {
             margin-top: 24px;
@@ -771,9 +954,9 @@
                 <a href="javascript:void(0)" class="link-item" onclick="copySteamID('1533011988')" aria-label="复制 Steam 好友码"><i class="fab fa-steam"></i> Steam</a>
             </div>
 
-            <!-- 小游戏入口：占位，功能开发中 -->
-            <div class="game-entry" id="gameEntry" role="button" tabindex="0" aria-label="小游戏入口（开发中）">
-                <i class="fas fa-gamepad"></i> 小游戏入口 <span class="badge">敬请期待</span>
+            <!-- 小游戏入口 -->
+            <div class="game-entry" id="gameEntry" role="button" tabindex="0" aria-label="打开俄罗斯方块小游戏">
+                <i class="fas fa-gamepad"></i> 小游戏 · 俄罗斯方块 <span class="badge">PLAY</span>
             </div>
 
             <div class="qa-static">
@@ -797,6 +980,54 @@
 
     <!-- Toast 提示 -->
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- 俄罗斯方块游戏视图（Hash 路由：/#/game/tetris） -->
+    <div class="game-view" id="gameView" aria-hidden="true">
+        <div class="game-panel">
+            <div class="game-top">
+                <button class="game-back" id="gameBack" aria-label="返回主页">
+                    <i class="fas fa-arrow-left"></i> 返回
+                </button>
+                <div class="game-title"><i class="fas fa-cubes"></i>俄罗斯方块</div>
+                <div class="game-score">分数 <b id="gameScore">0</b></div>
+            </div>
+
+            <div class="game-main">
+                <div class="game-board-wrap">
+                    <canvas id="tetrisBoard" width="300" height="600"></canvas>
+                </div>
+                <div class="game-side">
+                    <div class="side-box">下一个
+                        <canvas id="tetrisNext" width="96" height="96"></canvas>
+                    </div>
+                    <div class="side-box">等级 <b id="gameLevel">1</b></div>
+                    <div class="side-box">消除 <b id="gameLines">0</b></div>
+                </div>
+            </div>
+
+            <div class="game-controls" aria-label="游戏操作">
+                <button class="ctrl-btn" id="btnLeft" aria-label="左移"><i class="fas fa-arrow-left"></i></button>
+                <button class="ctrl-btn" id="btnRight" aria-label="右移"><i class="fas fa-arrow-right"></i></button>
+                <button class="ctrl-btn" id="btnRotate" aria-label="旋转"><i class="fas fa-rotate-right"></i></button>
+                <button class="ctrl-btn" id="btnDown" aria-label="加速下落"><i class="fas fa-arrow-down"></i></button>
+                <button class="ctrl-btn" id="btnDrop" aria-label="直接落底"><i class="fas fa-angles-down"></i></button>
+            </div>
+            <div class="game-hint">← → 移动 · ↑ 旋转 · ↓ 加速 · 空格落底 · P 暂停 · Esc 返回</div>
+
+            <!-- 暂停 / 结束遮罩 -->
+            <div class="game-pause" id="gamePause">
+                <div class="pause-card">
+                    <div class="pause-icon" id="pauseIcon"><i class="fas fa-pause"></i></div>
+                    <div class="pause-text" id="pauseText">已暂停</div>
+                    <div class="pause-sub" id="pauseSub">按 P 或点击继续</div>
+                    <div class="pause-btns">
+                        <button class="pause-btn" id="pauseResume"><i class="fas fa-play"></i> 继续</button>
+                        <button class="pause-btn" id="pauseRestart"><i class="fas fa-redo"></i> 重新开始</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // ============================================================
@@ -1036,19 +1267,320 @@
         });
 
         // ============================================================
-        //  小游戏入口（占位，开发中）
+        //  小游戏：俄罗斯方块（Hash 路由 /#/game/tetris）
         // ============================================================
+        const GAME_HASH = '#/game/tetris';
         const gameEntry = document.getElementById('gameEntry');
-        function gameComingSoon() {
-            showToast('小游戏开发中，敬请期待');
+        const gameView = document.getElementById('gameView');
+        const gameBackBtn = document.getElementById('gameBack');
+        const boardCanvas = document.getElementById('tetrisBoard');
+        const nextCanvas = document.getElementById('tetrisNext');
+        const scoreEl = document.getElementById('gameScore');
+        const levelEl = document.getElementById('gameLevel');
+        const linesEl = document.getElementById('gameLines');
+        const pauseOverlay = document.getElementById('gamePause');
+        const pauseIcon = document.getElementById('pauseIcon');
+        const pauseText = document.getElementById('pauseText');
+        const pauseSub = document.getElementById('pauseSub');
+
+        const COLS = 10, ROWS = 20, CELL = 30;
+        const PIECE_COLORS = {
+            I: '#67e8f9', O: '#fbbf24', T: '#c084fc', S: '#4ade80',
+            Z: '#f87171', J: '#60a5fa', L: '#fb923c'
+        };
+        const PIECE_SHAPES = {
+            I: [[1, 1, 1, 1]],
+            O: [[1, 1], [1, 1]],
+            T: [[0, 1, 0], [1, 1, 1]],
+            S: [[0, 1, 1], [1, 1, 0]],
+            Z: [[1, 1, 0], [0, 1, 1]],
+            J: [[1, 0, 0], [1, 1, 1]],
+            L: [[0, 0, 1], [1, 1, 1]]
+        };
+        const PIECE_TYPES = Object.keys(PIECE_SHAPES);
+        const LINE_SCORE = [0, 100, 300, 500, 800];
+
+        let board, cur, next, score, lines, level;
+        let lastDrop = 0, rafId = null, gameState = 'idle';
+
+        function newPiece(type) {
+            const t = type || PIECE_TYPES[(Math.random() * PIECE_TYPES.length) | 0];
+            const shape = PIECE_SHAPES[t].map(r => r.slice());
+            return { type: t, shape: shape, x: ((COLS - shape[0].length) / 2) | 0, y: 0 };
         }
-        gameEntry.addEventListener('click', gameComingSoon);
+        function collides(shape, ox, oy) {
+            for (let y = 0; y < shape.length; y++) {
+                for (let x = 0; x < shape[y].length; x++) {
+                    if (!shape[y][x]) continue;
+                    const nx = ox + x, ny = oy + y;
+                    if (nx < 0 || nx >= COLS || ny >= ROWS) return true;
+                    if (ny >= 0 && board[ny][nx]) return true;
+                }
+            }
+            return false;
+        }
+        function rotateMatrix(m) {
+            return m[0].map((_, i) => m.map(r => r[i]).reverse());
+        }
+        function resetGame() {
+            board = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+            next = newPiece();
+            score = 0; lines = 0; level = 1;
+            gameState = 'running';
+            pauseOverlay.classList.remove('show');
+            updateHud();
+            spawnPiece();
+        }
+        function spawnPiece() {
+            cur = next;
+            next = newPiece();
+            if (collides(cur.shape, cur.x, cur.y)) {
+                gameState = 'over';
+                pauseIcon.innerHTML = '<i class="fas fa-skull"></i>';
+                pauseText.textContent = '游戏结束 · 得分 ' + score;
+                pauseSub.textContent = '点击「重新开始」再来一局';
+                pauseOverlay.classList.add('show');
+            }
+        }
+        function lockPiece() {
+            const { shape, x, y, type } = cur;
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[r].length; c++) {
+                    if (shape[r][c]) {
+                        const by = y + r, bx = x + c;
+                        if (by >= 0) board[by][bx] = PIECE_COLORS[type];
+                    }
+                }
+            }
+            clearLines();
+            spawnPiece();
+        }
+        function clearLines() {
+            let cleared = 0;
+            for (let r = ROWS - 1; r >= 0; r--) {
+                if (board[r].every(c => c)) {
+                    board.splice(r, 1);
+                    board.unshift(Array(COLS).fill(null));
+                    cleared++;
+                    r++;
+                }
+            }
+            if (cleared) {
+                score += (LINE_SCORE[cleared] || 800) * level;
+                lines += cleared;
+                level = Math.floor(lines / 10) + 1;
+                updateHud();
+            }
+        }
+        function updateHud() {
+            scoreEl.textContent = score;
+            levelEl.textContent = level;
+            linesEl.textContent = lines;
+        }
+        function gravityMs() {
+            return Math.max(120, 820 - (level - 1) * 70);
+        }
+
+        function move(dx) {
+            if (gameState !== 'running') return;
+            if (!collides(cur.shape, cur.x + dx, cur.y)) cur.x += dx;
+        }
+        function rotate() {
+            if (gameState !== 'running') return;
+            const rotated = rotateMatrix(cur.shape);
+            for (const dx of [0, -1, 1, -2, 2]) {
+                if (!collides(rotated, cur.x + dx, cur.y)) {
+                    cur.shape = rotated;
+                    cur.x += dx;
+                    return;
+                }
+            }
+        }
+        function softDrop() {
+            if (gameState !== 'running') return false;
+            if (!collides(cur.shape, cur.x, cur.y + 1)) { cur.y++; return true; }
+            return false;
+        }
+        function hardDrop() {
+            if (gameState !== 'running') return;
+            while (!collides(cur.shape, cur.x, cur.y + 1)) cur.y++;
+            lockPiece();
+        }
+
+        // ---- 渲染 ----
+        function roundedRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + w, y, x + w, y + h, r);
+            ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r);
+            ctx.arcTo(x, y, x + w, y, r);
+            ctx.closePath();
+        }
+        function drawBlock(ctx, cx, cy, color, px, py, size) {
+            const x = px + cx * size, y = py + cy * size;
+            ctx.fillStyle = color;
+            ctx.globalAlpha = 0.15;
+            ctx.fillRect(x, y, size, size);
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = color;
+            const inset = 1.5;
+            roundedRect(ctx, x + inset, y + inset, size - inset * 2, size - inset * 2, 4);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            ctx.fillRect(x + inset, y + inset, size - inset * 2, 3);
+        }
+        function render() {
+            const ctx = boardCanvas.getContext('2d');
+            ctx.clearRect(0, 0, COLS * CELL, ROWS * CELL);
+            ctx.fillStyle = 'rgba(255,255,255,0.025)';
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if ((r + c) % 2 === 0) ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
+                }
+            }
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (board[r][c]) drawBlock(ctx, c, r, board[r][c], 0, 0, CELL);
+                }
+            }
+            if (cur && gameState !== 'over') {
+                const { shape, x, y, type } = cur;
+                for (let r = 0; r < shape.length; r++) {
+                    for (let c = 0; c < shape[r].length; c++) {
+                        if (shape[r][c] && y + r >= 0) {
+                            drawBlock(ctx, x + c, y + r, PIECE_COLORS[type], 0, 0, CELL);
+                        }
+                    }
+                }
+            }
+            renderNext();
+        }
+        function renderNext() {
+            const ctx = nextCanvas.getContext('2d');
+            ctx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+            if (!next) return;
+            const shape = next.shape, color = PIECE_COLORS[next.type];
+            const size = 24;
+            const w = shape[0].length * size, h = shape.length * size;
+            const ox = (nextCanvas.width - w) / 2, oy = (nextCanvas.height - h) / 2;
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[r].length; c++) {
+                    if (shape[r][c]) drawBlock(ctx, c, r, color, ox, oy, size);
+                }
+            }
+        }
+
+        // ---- 主循环 ----
+        function loop(ts) {
+            if (gameState === 'running') {
+                if (ts - lastDrop >= gravityMs()) {
+                    lastDrop = ts;
+                    if (!softDrop()) lockPiece();
+                }
+            }
+            render();
+            rafId = requestAnimationFrame(loop);
+        }
+        function startGame() {
+            if (rafId) cancelAnimationFrame(rafId);
+            resetGame();
+            lastDrop = performance.now();
+            rafId = requestAnimationFrame(loop);
+        }
+        function stopGame() {
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = null;
+            gameState = 'idle';
+        }
+
+        // ---- 暂停 ----
+        function togglePause() {
+            if (gameState === 'running') {
+                gameState = 'paused';
+                pauseIcon.innerHTML = '<i class="fas fa-pause"></i>';
+                pauseText.textContent = '已暂停';
+                pauseSub.textContent = '按 P 或点击继续';
+                pauseOverlay.classList.add('show');
+            } else if (gameState === 'paused') {
+                gameState = 'running';
+                pauseOverlay.classList.remove('show');
+                lastDrop = performance.now();
+            }
+        }
+
+        // ---- 路由 ----
+        function isGameRoute() { return location.hash === GAME_HASH; }
+        function showGame() {
+            gameView.classList.add('active');
+            gameView.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('game-open');
+            startGame();
+        }
+        function hideGame() {
+            gameView.classList.remove('active');
+            gameView.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('game-open');
+            stopGame();
+        }
+        function openGame() {
+            if (isGameRoute()) return;
+            try { sessionStorage.setItem('dede-game-opened', '1'); } catch (e) {}
+            location.hash = GAME_HASH;
+        }
+        function closeGame() {
+            if (!isGameRoute()) { hideGame(); return; }
+            try {
+                if (sessionStorage.getItem('dede-game-opened') === '1') {
+                    sessionStorage.removeItem('dede-game-opened');
+                    history.back();
+                } else {
+                    history.replaceState(null, '', location.pathname + location.search);
+                    hideGame();
+                }
+            } catch (e) {
+                history.replaceState(null, '', location.pathname + location.search);
+                hideGame();
+            }
+        }
+        function route() {
+            if (isGameRoute()) showGame();
+            else { hideGame(); try { sessionStorage.removeItem('dede-game-opened'); } catch (e) {} }
+        }
+
+        // ---- 事件绑定 ----
+        gameEntry.addEventListener('click', openGame);
         gameEntry.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                gameComingSoon();
+                openGame();
             }
         });
+        gameBackBtn.addEventListener('click', closeGame);
+        document.getElementById('btnLeft').addEventListener('click', function () { move(-1); });
+        document.getElementById('btnRight').addEventListener('click', function () { move(1); });
+        document.getElementById('btnRotate').addEventListener('click', rotate);
+        document.getElementById('btnDown').addEventListener('click', function () { softDrop(); lastDrop = performance.now(); });
+        document.getElementById('btnDrop').addEventListener('click', hardDrop);
+        document.getElementById('pauseResume').addEventListener('click', togglePause);
+        document.getElementById('pauseRestart').addEventListener('click', startGame);
+
+        window.addEventListener('hashchange', route);
+
+        window.addEventListener('keydown', function (e) {
+            if (!gameView.classList.contains('active')) return;
+            const k = e.key;
+            if (k === 'ArrowLeft') { e.preventDefault(); move(-1); }
+            else if (k === 'ArrowRight') { e.preventDefault(); move(1); }
+            else if (k === 'ArrowDown') { e.preventDefault(); if (!softDrop()) lockPiece(); lastDrop = performance.now(); }
+            else if (k === 'ArrowUp') { e.preventDefault(); rotate(); }
+            else if (k === ' ') { e.preventDefault(); hardDrop(); }
+            else if (k === 'p' || k === 'P') { togglePause(); }
+            else if (k === 'Escape') { closeGame(); }
+        });
+
+        // 初始路由：直接打开 /#/game/tetris 也能进入游戏
+        route();
 
         // ===== 基础交互 =====
         const card = document.getElementById('card');
