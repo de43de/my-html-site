@@ -169,7 +169,7 @@
     // ---------- 彩蛋：水花 ----------
     function spawnWave() {
         wave.length = 0;
-        const n = isMobile ? 160 : 240;
+        const n = isMobile ? 280 : 420;
         for (let i = 0; i < n; i++) {
             wave.push({
                 ang: Math.random() * Math.PI * 2,
@@ -273,4 +273,7 @@
     wander.y = Math.random() * H;
     window.addEventListener('resize', resize, { passive: true });
     requestAnimationFrame(frame);
+
+    // 暴露主动触发接口，供页面按钮调用
+    window.DEDE_EGG = { burst: tryActiveTrigger };
 })();
