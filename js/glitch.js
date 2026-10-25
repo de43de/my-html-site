@@ -85,7 +85,7 @@
     // 内容板块选择器：点击这些区域不触发彩蛋，只有点空白背景才触发
     const UI_SELECTOR = 'a, button, summary, input, textarea, select, [role="button"], ' +
         'article, h1, h2, h3, p, time, details, ' +
-        '.hero-inner, .stream-head, .game-shell, .socials, .copyright, .beian, .easter-egg, .tools-view';
+        '.hero-inner, .stream-head, .game-shell, .socials, .copyright, .beian, .easter-egg, .tools-view, .game-view';
 
     window.addEventListener('click', function (e) {
         const t = e.target;
