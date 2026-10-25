@@ -145,11 +145,6 @@
         showToast(currentTheme === 'cyber' ? '已切换到赛博' : '已切换到极简');
     });
 
-    // ---------- 小游戏壳子 ----------
-    document.getElementById('gameShell').addEventListener('click', function () {
-        showToast('小游戏开发中');
-    });
-
     // ---------- 彩蛋入口按钮 ----------
     const eggBtn = document.getElementById('eggBtn');
     eggBtn.addEventListener('click', function (e) {
@@ -256,6 +251,8 @@
     const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
     let konamiIdx = 0;
     window.addEventListener('keydown', function (e) {
+        // 面板打开时（游戏/工具）不响应 Konami 彩蛋，避免误触
+        if (location.hash === '#/game' || location.hash === '#/tools') return;
         const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
         if (k === KONAMI[konamiIdx]) {
             konamiIdx++;
