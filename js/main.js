@@ -138,7 +138,8 @@
     try { currentTheme = localStorage.getItem('dede-theme-v3') || 'cyber'; } catch (e) {}
     applyTheme(currentTheme, false);
 
-    themeToggle.addEventListener('click', function () {
+    themeToggle.addEventListener('click', function (e) {
+        e.stopPropagation();
         currentTheme = currentTheme === 'cyber' ? 'minimal' : 'cyber';
         applyTheme(currentTheme, true);
         showToast(currentTheme === 'cyber' ? '已切换到赛博' : '已切换到极简');
