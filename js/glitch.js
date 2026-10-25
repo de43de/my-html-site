@@ -104,7 +104,9 @@
     }
 
     // 主动触发（点击）：不限次数；黑屏中继续点则叠加水花（放烟花）
+    // 句号模式（极简主题）下禁止点击触发
     function tryActiveTrigger(nx, ny) {
+        if (currentTheme() === 'minimal') return;
         if (state === 'idle') {
             startEgg(nx, ny);
         } else if (state === 'darken') {
