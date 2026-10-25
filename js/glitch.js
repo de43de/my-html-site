@@ -29,7 +29,6 @@
     let state = 'idle';   // idle | darken | wave | recover
     let stateTime = 0;
     let passiveTriggered = false;   // 被动触发（团块抓鼠标）仅一次
-    let trigger = { x: 0.5, y: 0.5 };   // 归一化
     let blackAlpha = 0;
     const wave = [];
 
@@ -74,7 +73,6 @@
     }, { passive: true });
 
     window.addEventListener('click', function (e) {
-        if (state !== 'idle') return;
         const t = e.target;
         if (t && t.closest && t.closest('a, button, summary, [role="button"], input, textarea, select')) return;
         tryActiveTrigger(e.clientX / W, e.clientY / H);
@@ -82,17 +80,25 @@
 
     // ---------- 触发 ----------
     function startEgg(nx, ny) {
-        trigger.x = nx;
-        trigger.y = ny;
+        wave.length = 0;
+        pushWave(nx, ny);
         state = 'darken';
         stateTime = 0;
         blackAlpha = 0;
     }
 
-    // 主动触发（点击）：不限次数
+    // 主动触发（点击）：不限次数；黑屏中继续点则叠加水花（放烟花）
     function tryActiveTrigger(nx, ny) {
-        if (state !== 'idle') return;
-        startEgg(nx, ny);
+        if (state === 'idle') {
+            startEgg(nx, ny);
+        } else if (state === 'darken') {
+            pushWave(nx, ny);
+        } else {   // wave / recover
+            pushWave(nx, ny);
+            state = 'wave';
+            stateTime = 0;
+            blackAlpha = 1;
+        }
     }
 
     // 被动触发（桌面团块抓鼠标）：仅一次
@@ -167,11 +173,13 @@
     }
 
     // ---------- 彩蛋：水花 ----------
-    function spawnWave() {
-        wave.length = 0;
+    const MAX_WAVE = isMobile ? 2000 : 3000;
+    function pushWave(cx, cy) {
         const n = isMobile ? 280 : 420;
         for (let i = 0; i < n; i++) {
             wave.push({
+                cx: cx,
+                cy: cy,
                 ang: Math.random() * Math.PI * 2,
                 r: 0,
                 speed: 0.25 + Math.random() * 0.6,
@@ -182,13 +190,17 @@
                 to43: false
             });
         }
+        // 连续点击叠加过多时，裁掉最老的（已淡出）粒子，防卡顿
+        if (wave.length > MAX_WAVE) {
+            wave.splice(0, wave.length - MAX_WAVE);
+        }
     }
 
     function updateWave(dt) {
         for (let i = 0; i < wave.length; i++) {
             const p = wave[i];
             p.life += dt;
-            if (p.life < p.born) continue;
+            if (p.life < p.born || p.life > 3.0) continue;
             p.r += p.speed * dt;
             if (p.life >= p.switchAt) {
                 if (!p.to43) { p.to43 = true; p.c = '43'; }
@@ -202,13 +214,11 @@
         ctx.font = FONT_SIZE + 'px "Courier New", monospace';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        const cx = trigger.x * W;
-        const cy = trigger.y * H;
         for (let i = 0; i < wave.length; i++) {
             const p = wave[i];
-            if (p.life < p.born) continue;
-            const x = cx + Math.cos(p.ang) * p.r * W;
-            const y = cy + Math.sin(p.ang) * p.r * H;
+            if (p.life < p.born || p.life > 3.0) continue;
+            const x = p.cx * W + Math.cos(p.ang) * p.r * W;
+            const y = p.cy * H + Math.sin(p.ang) * p.r * H;
             ctx.globalAlpha = fade * Math.max(0, 1 - p.life / 3.0);
             ctx.fillStyle = GREEN;
             ctx.fillText(p.c, x, y);
@@ -220,7 +230,7 @@
         stateTime += dt;
         if (state === 'darken') {
             blackAlpha = Math.min(stateTime / 0.6, 1);
-            if (stateTime > 0.6) { state = 'wave'; stateTime = 0; spawnWave(); }
+            if (stateTime > 0.6) { state = 'wave'; stateTime = 0; }
         } else if (state === 'wave') {
             blackAlpha = 1;
             updateWave(dt);
