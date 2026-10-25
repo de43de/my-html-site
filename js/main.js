@@ -154,6 +154,10 @@
     const eggBtn = document.getElementById('eggBtn');
     eggBtn.addEventListener('click', function (e) {
         e.stopPropagation();
+        if (currentTheme === 'minimal') {
+            showToast('极简模式没有彩蛋');
+            return;
+        }
         if (window.DEDE_EGG) {
             const rect = eggBtn.getBoundingClientRect();
             const nx = (rect.left + rect.width / 2) / window.innerWidth;
