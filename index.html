@@ -39,9 +39,9 @@
         </div>
         <div class="post-list" id="postList"></div>
 
-        <!-- 小游戏入口壳子 -->
-        <a class="game-shell" id="gameShell" href="javascript:void(0)" aria-label="小游戏（开发中）">
-            <i class="fas fa-gamepad"></i> 小游戏 <span class="game-tag">开发中</span>
+        <!-- 小游戏入口 -->
+        <a class="game-shell" id="gameShell" href="#/game" aria-label="俄罗斯方块">
+            <i class="fas fa-gamepad"></i> 小游戏 <span class="game-tag">俄罗斯方块</span>
         </a>
 
         <!-- 实用小工具入口 -->
@@ -86,9 +86,47 @@
         </div>
     </div>
 
+    <!-- 小游戏面板 -->
+    <div class="game-view" id="gameView" aria-hidden="true">
+        <div class="game-panel">
+            <div class="game-head">
+                <span class="game-title"><i class="fas fa-gamepad"></i> 俄罗斯方块</span>
+                <button class="game-close" id="gameClose" aria-label="关闭">×</button>
+            </div>
+            <div class="game-main">
+                <div class="game-stage">
+                    <canvas id="gameCanvas"></canvas>
+                    <div class="game-overlay" id="gameOverlay">
+                        <div class="over-title" id="overTitle">GAME OVER</div>
+                        <div class="over-score" id="overScore"></div>
+                        <div class="over-hint" id="overHint">空格键重新开始</div>
+                    </div>
+                </div>
+                <div class="game-side">
+                    <div class="game-stat"><span>分数</span><strong id="gameScore">0</strong></div>
+                    <div class="game-stat"><span>等级</span><strong id="gameLevel">1</strong></div>
+                    <div class="game-stat"><span>行数</span><strong id="gameLines">0</strong></div>
+                    <div class="game-next">
+                        <span>下一个</span>
+                        <canvas id="gameNextCanvas"></canvas>
+                    </div>
+                    <button class="game-btn" id="gameStart">重新开始</button>
+                </div>
+            </div>
+            <div class="game-controls" id="gameControls">
+                <button data-act="left" aria-label="左移">←</button>
+                <button data-act="right" aria-label="右移">→</button>
+                <button data-act="rotate" aria-label="旋转">↻</button>
+                <button data-act="down" aria-label="下移">↓</button>
+                <button data-act="drop" aria-label="硬降">⤓</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/data.js"></script>
     <script src="js/glitch.js"></script>
     <script src="js/main.js"></script>
     <script src="js/tools.js"></script>
+    <script src="js/game.js"></script>
 </body>
 </html>
