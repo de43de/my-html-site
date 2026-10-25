@@ -85,6 +85,7 @@
         state = 'darken';
         stateTime = 0;
         blackAlpha = 0;
+        canvas.style.pointerEvents = 'auto';   // 黑屏期间拦截点击，防穿透到底层元素
     }
 
     // 主动触发（点击）：不限次数；黑屏中继续点则叠加水花（放烟花）
@@ -238,7 +239,7 @@
         } else if (state === 'recover') {
             blackAlpha = Math.max(0, 1 - stateTime / 1.0);
             updateWave(dt);
-            if (stateTime > 1.0) { state = 'idle'; stateTime = 0; wave.length = 0; }
+            if (stateTime > 1.0) { state = 'idle'; stateTime = 0; wave.length = 0; canvas.style.pointerEvents = 'none'; }
         }
     }
 
