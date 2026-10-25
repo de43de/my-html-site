@@ -301,7 +301,7 @@
         activeId = id;
         renderTabs();
         if (cleanup) { try { cleanup(); } catch (e) {} cleanup = null; }
-        bodyEl.innerHTML = tool.html;
+        bodyEl.innerHTML = tool.html();
         if (tool.init) cleanup = tool.init(bodyEl);
     }
 
