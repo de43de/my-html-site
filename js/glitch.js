@@ -94,19 +94,30 @@
     // ---------- 团块物理（惯性） ----------
     function updateBlob(dt) {
         if (isMobile) {
-            // 随机游走
-            if (Math.random() < 0.01) {
-                wander.x = Math.random() * W;
-                wander.y = Math.random() * H;
+            // 平滑随机游走：朝随机目标点匀速漂移（带轻微惯性），到达/定期换目标，边界反弹
+            const margin = BLOB_R * 1.1;
+            if (Math.random() < 0.015) {
+                wander.x = margin + Math.random() * (W - margin * 2);
+                wander.y = margin + Math.random() * (H - margin * 2);
             }
-            blob.vx += (wander.x - blob.x) * 0.4 * dt;
-            blob.vy += (wander.y - blob.y) * 0.4 * dt;
-            blob.vx *= 0.92;
-            blob.vy *= 0.92;
-            if (blob.x < BLOB_R) { blob.x = BLOB_R; blob.vx *= -0.7; }
-            if (blob.x > W - BLOB_R) { blob.x = W - BLOB_R; blob.vx *= -0.7; }
-            if (blob.y < BLOB_R) { blob.y = BLOB_R; blob.vy *= -0.7; }
-            if (blob.y > H - BLOB_R) { blob.y = H - BLOB_R; blob.vy *= -0.7; }
+            const dx = wander.x - blob.x;
+            const dy = wander.y - blob.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 12) {
+                wander.x = margin + Math.random() * (W - margin * 2);
+                wander.y = margin + Math.random() * (H - margin * 2);
+            }
+            const SPEED = 80;   // px/s，缓慢漂移
+            if (dist > 1) {
+                const tvx = (dx / dist) * SPEED;
+                const tvy = (dy / dist) * SPEED;
+                blob.vx += (tvx - blob.vx) * 0.06;
+                blob.vy += (tvy - blob.vy) * 0.06;
+            }
+            if (blob.x < margin) { blob.x = margin; wander.x = margin + Math.random() * W; }
+            if (blob.x > W - margin) { blob.x = W - margin; wander.x = Math.random() * (W - margin); }
+            if (blob.y < margin) { blob.y = margin; wander.y = margin + Math.random() * H; }
+            if (blob.y > H - margin) { blob.y = H - margin; wander.y = Math.random() * (H - margin); }
         } else {
             // 追鼠标（速度累积 + 阻尼，冲过头再回头）
             blob.vx += (mouse.x - blob.x) * 1.5 * dt;
