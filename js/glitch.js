@@ -28,7 +28,7 @@
     // ---------- 状态 ----------
     let state = 'idle';   // idle | darken | wave | recover
     let stateTime = 0;
-    let triggered = false;
+    let passiveTriggered = false;   // 被动触发（团块抓鼠标）仅一次
     let trigger = { x: 0.5, y: 0.5 };   // 归一化
     let blackAlpha = 0;
     const wave = [];
@@ -74,21 +74,32 @@
     }, { passive: true });
 
     window.addEventListener('click', function (e) {
-        if (!isMobile || triggered) return;
+        if (state !== 'idle') return;
         const t = e.target;
         if (t && t.closest && t.closest('a, button, summary, [role="button"], input, textarea, select')) return;
-        tryTrigger(e.clientX / W, e.clientY / H);
+        tryActiveTrigger(e.clientX / W, e.clientY / H);
     });
 
     // ---------- 触发 ----------
-    function tryTrigger(nx, ny) {
-        if (triggered) return;
-        triggered = true;
+    function startEgg(nx, ny) {
         trigger.x = nx;
         trigger.y = ny;
         state = 'darken';
         stateTime = 0;
         blackAlpha = 0;
+    }
+
+    // 主动触发（点击）：不限次数
+    function tryActiveTrigger(nx, ny) {
+        if (state !== 'idle') return;
+        startEgg(nx, ny);
+    }
+
+    // 被动触发（桌面团块抓鼠标）：仅一次
+    function tryPassiveTrigger(nx, ny) {
+        if (passiveTriggered || state !== 'idle') return;
+        passiveTriggered = true;
+        startEgg(nx, ny);
     }
 
     // ---------- 团块物理（惯性） ----------
@@ -136,10 +147,10 @@
             particles[(Math.random() * particles.length) | 0].c = randomChar();
         }
 
-        // 桌面：追上鼠标触发
-        if (!isMobile && !triggered) {
+        // 桌面：团块追上鼠标被动触发（仅一次）
+        if (!isMobile) {
             if (Math.hypot(blob.x - mouse.x, blob.y - mouse.y) < BLOB_R * 0.45) {
-                tryTrigger(blob.x / W, blob.y / H);
+                tryPassiveTrigger(blob.x / W, blob.y / H);
             }
         }
     }
