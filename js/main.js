@@ -149,6 +149,18 @@
         showToast('小游戏开发中');
     });
 
+    // ---------- 彩蛋入口按钮 ----------
+    const eggBtn = document.getElementById('eggBtn');
+    eggBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (window.DEDE_EGG) {
+            const rect = eggBtn.getBoundingClientRect();
+            const nx = (rect.left + rect.width / 2) / window.innerWidth;
+            const ny = (rect.top + rect.height / 2) / window.innerHeight;
+            window.DEDE_EGG.burst(nx, ny);
+        }
+    });
+
     // ---------- 43 彩蛋 ----------
     const easterEgg = document.getElementById('easterEgg');
     let isFortyThree = false;
