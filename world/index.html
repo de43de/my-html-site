@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="dede 的世界观设定" />
+    <meta name="theme-color" content="#0a0a12" />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <title>世界观 · dede</title>
+    <style>
+        .world-sub {
+            margin-top: 10px;
+            color: var(--text-2);
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        .world-note {
+            color: var(--text-2);
+            font-size: 13px;
+        }
+        .world-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+        }
+        .world-slot {
+            border: 1px dashed var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 92px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            color: var(--text-2);
+            transition: border-color .2s ease, transform .2s ease;
+        }
+        .world-slot:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .world-slot-title {
+            color: var(--text-1);
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .world-slot-hint { font-size: 12px; opacity: .55; }
+        @media (max-width: 600px) {
+            .world-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body data-theme="cyber">
+
+    <!-- 首屏 -->
+    <header class="hero" id="hero">
+        <div class="hero-inner">
+            <h1 class="hero-title">世界观</h1>
+            <p class="world-sub">蒸汽中世纪 · 架空星球</p>
+        </div>
+    </header>
+
+    <!-- 设定主体（待填） -->
+    <main class="stream" id="stream">
+        <div class="stream-head">
+            <h2>设定施工中</h2>
+            <span class="world-note">内容待填</span>
+        </div>
+
+        <div class="world-grid">
+            <div class="world-slot">
+                <span class="world-slot-title">地理</span>
+                <span class="world-slot-hint">待填</span>
+            </div>
+            <div class="world-slot">
+                <span class="world-slot-title">历史</span>
+                <span class="world-slot-hint">待填</span>
+            </div>
+            <div class="world-slot">
+                <span class="world-slot-title">国家</span>
+                <span class="world-slot-hint">待填</span>
+            </div>
+            <div class="world-slot">
+                <span class="world-slot-title">技术</span>
+                <span class="world-slot-hint">待填</span>
+            </div>
+        </div>
+
+        <a class="game-shell" href="../index.html" aria-label="返回主页">
+            <i class="fas fa-arrow-left"></i> 返回主页
+        </a>
+    </main>
+
+</body>
+</html>
