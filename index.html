@@ -29,9 +29,6 @@
         <div class="hero-inner">
             <h1 class="hero-title" id="logo">dede</h1>
             <p class="hero-sub">记点想法，分享点东西。</p>
-            <a class="hero-scroll" href="#stream" aria-label="下滑浏览想法">
-                <i class="fas fa-chevron-down"></i>
-            </a>
         </div>
     </header>
 
@@ -46,6 +43,11 @@
         <!-- 小游戏入口壳子 -->
         <a class="game-shell" id="gameShell" href="javascript:void(0)" aria-label="小游戏（开发中）">
             <i class="fas fa-gamepad"></i> 小游戏 <span class="game-tag">开发中</span>
+        </a>
+
+        <!-- 实用小工具入口 -->
+        <a class="game-shell" id="toolsEntry" href="#/tools" aria-label="实用小工具">
+            <i class="fas fa-wrench"></i> 实用工具 <span class="game-tag">工具箱</span>
         </a>
     </main>
 
@@ -66,8 +68,21 @@
     <!-- Toast -->
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+    <!-- 实用工具面板 -->
+    <div class="tools-view" id="toolsView" aria-hidden="true">
+        <div class="tools-panel">
+            <div class="tools-head">
+                <span class="tools-title"><i class="fas fa-wrench"></i> 实用工具</span>
+                <button class="tools-close" id="toolsClose" aria-label="关闭">×</button>
+            </div>
+            <div class="tools-tabs" id="toolsTabs" role="tablist"></div>
+            <div class="tools-body" id="toolsBody"></div>
+        </div>
+    </div>
+
     <script src="js/data.js"></script>
     <script src="js/glitch.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/tools.js"></script>
 </body>
 </html>
