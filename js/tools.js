@@ -274,14 +274,70 @@
         return null;
     }
 
+    // ---------- 43 编码解码 ----------
+    // 算法：文本 → UTF-8 字节 → 每字节 8 位二进制 → 0 映射为「4」、1 映射为「3」。
+    // 解码反过来。结果是一串纯 4/3，完全可逆。
+    function c43Html() {
+        return '<div class="tool-pane">' +
+            '<textarea id="c43In" class="tool-area" rows="5" placeholder="输入文本…" spellcheck="false"></textarea>' +
+            '<div class="tool-row">' +
+            '<button class="mini-btn" data-act="enc">编码 → 43</button>' +
+            '<button class="mini-btn" data-act="dec">解码 43 → 文本</button>' +
+            '<button class="mini-btn" data-act="copy">复制结果</button>' +
+            '</div>' +
+            '<div class="tool-block"><div class="tool-label">结果（纯 4 和 3）</div>' +
+            '<div id="c43Out" class="tool-out mono"></div></div></div>';
+    }
+    function encode43(str) {
+        const bytes = new TextEncoder().encode(str);
+        let out = '';
+        for (let i = 0; i < bytes.length; i++) {
+            let b = bytes[i];
+            for (let k = 7; k >= 0; k--) out += ((b >> k) & 1) ? '3' : '4';
+        }
+        return out;
+    }
+    function decode43(s) {
+        const clean = s.replace(/[^34]/g, '');
+        if (!clean) return '';
+        if (clean.length % 8 !== 0) throw new Error('长度不是 8 的倍数，可能被截断');
+        const bytes = new Uint8Array(clean.length / 8);
+        for (let i = 0; i < clean.length; i += 8) {
+            let b = 0;
+            for (let k = 0; k < 8; k++) b = (b << 1) | (clean[i + k] === '3' ? 1 : 0);
+            bytes[i / 8] = b;
+        }
+        return new TextDecoder().decode(bytes);
+    }
+    function initC43(root) {
+        const input = root.querySelector('#c43In');
+        const out = root.querySelector('#c43Out');
+        root.querySelector('.tool-row').addEventListener('click', function (e) {
+            const btn = e.target.closest('.mini-btn');
+            if (!btn) return;
+            const act = btn.getAttribute('data-act');
+            if (act === 'copy') { if (out.textContent) copyText(out.textContent, btn); return; }
+            if (!input.value) { out.textContent = '（空）'; out.classList.remove('err'); return; }
+            try {
+                out.textContent = act === 'enc' ? encode43(input.value) : decode43(input.value);
+                out.classList.remove('err');
+            } catch (err) {
+                out.textContent = '失败：' + err.message;
+                out.classList.add('err');
+            }
+        });
+        return null;
+    }
+
     // ---------- 工具注册 ----------
     const tools = [
         { id: 'ip', name: 'IP 查询', icon: 'fa-globe', html: ipHtml, init: initIp },
-        { id: 'json', name: 'JSON', icon: 'fa-braces', html: jsonHtml, init: initJson },
+        { id: 'json', name: 'JSON', icon: 'fa-code', html: jsonHtml, init: initJson },
         { id: 'ts', name: '时间戳', icon: 'fa-clock', html: tsHtml, init: initTs },
         { id: 'b64', name: 'Base64', icon: 'fa-shield-halved', html: b64Html, init: initB64 },
         { id: 'url', name: 'URL', icon: 'fa-link', html: urlHtml, init: initUrl },
-        { id: 'pwd', name: '密码', icon: 'fa-key', html: pwdHtml, init: initPwd }
+        { id: 'pwd', name: '密码', icon: 'fa-key', html: pwdHtml, init: initPwd },
+        { id: 'c43', name: '43 编码', icon: 'fa-ghost', html: c43Html, init: initC43 }
     ];
 
     let activeId = 'ip';
