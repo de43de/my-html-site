@@ -72,9 +72,14 @@
         mouse.y = e.clientY;
     }, { passive: true });
 
+    // 内容板块选择器：点击这些区域不触发彩蛋，只有点空白背景才触发
+    const UI_SELECTOR = 'a, button, summary, input, textarea, select, [role="button"], ' +
+        'article, h1, h2, h3, p, time, details, ' +
+        '.hero-inner, .stream-head, .game-shell, .socials, .copyright, .beian, .easter-egg';
+
     window.addEventListener('click', function (e) {
         const t = e.target;
-        if (t && t.closest && t.closest('a, button, summary, [role="button"], input, textarea, select')) return;
+        if (t && t.closest && t.closest(UI_SELECTOR)) return;
         tryActiveTrigger(e.clientX / W, e.clientY / H);
     });
 
