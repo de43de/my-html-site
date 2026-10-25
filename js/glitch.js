@@ -30,10 +30,20 @@
     let stateTime = 0;
     let passiveTriggered = false;   // 被动触发（团块抓鼠标）仅一次
     let blackAlpha = 0;
+    let lastTheme = null;
     const wave = [];
 
     function randomChar() {
         return CHARS[(Math.random() * CHARS.length) | 0];
+    }
+
+    function currentTheme() {
+        return document.body.getAttribute('data-theme') === 'minimal' ? 'minimal' : 'cyber';
+    }
+
+    // 团块字符：极简主题为纯句号，赛博为乱码
+    function blobChar() {
+        return currentTheme() === 'minimal' ? '.' : randomChar();
     }
 
     function resize() {
@@ -61,7 +71,7 @@
             particles.push({
                 ox: Math.cos(ang) * r,
                 oy: Math.sin(ang) * r,
-                c: randomChar()
+                c: blobChar()
             });
         }
     }
@@ -81,7 +91,7 @@
         const t = e.target;
         if (t && t.closest && t.closest(UI_SELECTOR)) return;
         tryActiveTrigger(e.clientX / W, e.clientY / H);
-    });
+    }, true);
 
     // ---------- 触发 ----------
     function startEgg(nx, ny) {
@@ -156,7 +166,7 @@
 
         // 字符 glitch 闪烁
         for (let k = 0; k < 3; k++) {
-            particles[(Math.random() * particles.length) | 0].c = randomChar();
+            particles[(Math.random() * particles.length) | 0].c = blobChar();
         }
 
         // 桌面：团块追上鼠标被动触发（仅一次）
@@ -168,7 +178,7 @@
     }
 
     function drawBlob() {
-        ctx.fillStyle = GREEN;
+        ctx.fillStyle = currentTheme() === 'minimal' ? '#000' : GREEN;
         ctx.font = FONT_SIZE + 'px "Courier New", monospace';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -264,6 +274,13 @@
     function frame(now) {
         const dt = Math.min((now - last) / 1000, 0.1);
         last = now;
+
+        // 主题切换时刷新团块（minimal 纯句号黑色 / cyber 绿色乱码）
+        const th = currentTheme();
+        if (th !== lastTheme) {
+            lastTheme = th;
+            for (let i = 0; i < particles.length; i++) particles[i].c = blobChar();
+        }
 
         if (state === 'idle') {
             // 拖尾：逐帧擦除（磷光残影，保持透明不盖背景）
