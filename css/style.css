@@ -435,7 +435,7 @@ body.forty-three-mode .post-card {
 
 .tools-panel {
     width: 100%;
-    max-width: 640px;
+    max-width: 760px;
     max-height: 86vh;
     display: flex;
     flex-direction: column;
@@ -467,30 +467,43 @@ body.forty-three-mode .post-card {
 }
 .tools-close:hover { color: var(--accent); border-color: var(--accent); }
 
+.tools-main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
 .tools-tabs {
     display: flex;
-    gap: 6px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--line);
-    overflow-x: auto;
-    flex-wrap: nowrap;
+    flex-direction: column;
+    gap: 4px;
+    width: 168px;
+    flex: 0 0 auto;
+    padding: 12px 10px;
+    border-right: 1px solid var(--line);
+    overflow-y: auto;
 }
 .tool-tab {
-    flex: 0 0 auto;
-    padding: 7px 14px;
-    border-radius: 20px;
-    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid transparent;
     background: transparent;
     color: var(--text-2);
     font-size: 13px;
     cursor: pointer;
     white-space: nowrap;
+    text-align: left;
     transition: color 0.2s ease, border-color 0.2s ease, background-color 0.45s ease;
 }
-.tool-tab:hover { color: var(--text-1); }
+.tool-tab:hover { color: var(--text-1); background: var(--shell-bg); }
 .tool-tab.active { color: var(--accent); border-color: var(--accent); background: var(--tag-bg); }
+.tool-tab i { width: 16px; text-align: center; }
 
-.tools-body { padding: 18px 20px; overflow-y: auto; }
+.tools-body { flex: 1; min-width: 0; padding: 18px 20px; overflow-y: auto; }
 
 /* 工具组件 */
 .tool-pane { display: flex; flex-direction: column; gap: 16px; }
@@ -543,6 +556,7 @@ body.forty-three-mode .post-card {
 @media (max-width: 600px) {
     .tools-view { padding: 10px; }
     .tools-panel { max-height: 92vh; border-radius: 16px; }
-    .tools-body { padding: 14px 14px; }
-    .tool-tab { padding: 6px 12px; font-size: 12px; }
+    .tools-tabs { width: 120px; padding: 10px 8px; }
+    .tool-tab { padding: 9px 10px; font-size: 12px; gap: 8px; }
+    .tools-body { padding: 14px; }
 }
