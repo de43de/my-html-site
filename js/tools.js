@@ -316,10 +316,13 @@
     });
 
     // ---------- 路由 ----------
+    const glitchCanvas = document.getElementById('glitchCanvas');
     function applyRoute() {
         const open = location.hash === '#/tools';
         view.classList.toggle('open', open);
         document.body.style.overflow = open ? 'hidden' : '';
+        // 打开工具面板时隐藏终端乱码层，避免乱码透过毛玻璃遮罩透出
+        if (glitchCanvas) glitchCanvas.style.display = open ? 'none' : '';
         if (open) ensureActive();
     }
     window.addEventListener('hashchange', applyRoute);
