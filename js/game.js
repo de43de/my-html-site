@@ -31,8 +31,8 @@
         L: [[0, 0, 1], [1, 1, 1], [0, 0, 0]]
     };
     const COLORS = {
-        I: '#D9A85C', O: '#E8DCC0', T: '#D2543A', S: '#C98A4B',
-        Z: '#A7967A', J: '#8F6B3E', L: '#6E4F2A'
+        I: '#00e5ff', O: '#ffd60a', T: '#bf5af2', S: '#32d74b',
+        Z: '#ff453a', J: '#0a84ff', L: '#ff9f0a'
     };
     const TYPES = Object.keys(SHAPES);
 
@@ -180,7 +180,7 @@
     function drawCell(c, x, y, color, cell) {
         c.fillStyle = color;
         c.fillRect(x * cell + 1, y * cell + 1, cell - 2, cell - 2);
-        c.fillStyle = 'rgba(232, 220, 192, 0.18)';
+        c.fillStyle = 'rgba(255, 255, 255, 0.22)';
         c.fillRect(x * cell + 1, y * cell + 1, cell - 2, 4);
     }
 
@@ -188,7 +188,7 @@
         ctx.clearRect(0, 0, COLS * CELL, ROWS * CELL);
 
         // 网格线
-        ctx.strokeStyle = 'rgba(232, 220, 192, 0.06)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
         ctx.lineWidth = 1;
         for (let x = 1; x < COLS; x++) {
             ctx.beginPath(); ctx.moveTo(x * CELL + 0.5, 0); ctx.lineTo(x * CELL + 0.5, ROWS * CELL); ctx.stroke();
