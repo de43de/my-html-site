@@ -1,5 +1,5 @@
 /* ============================================================
-   交互逻辑：渲染 / 主题切换 / 滚动动效 / 彩蛋 / 复制
+   交互逻辑：渲染 / 主题切换 / 彩蛋 / 复制
    ============================================================ */
 (function () {
     const QQ_NUM = '3603823836';
@@ -56,30 +56,39 @@
         }
     }
 
-    // ---------- 渲染想法流 ----------
+    // ---------- 渲染想法流（索引条目，编号按数据自动递增） ----------
     const D = window.SITE_DATA;
     const postList = document.getElementById('postList');
-    D.posts.forEach(function (p) {
-        const card = document.createElement('article');
-        card.className = 'post-card';
-        card.innerHTML =
-            '<div class="post-meta">' +
-            '<span class="post-tag">' + escapeHtml(p.tag) + '</span>' +
+    D.posts.forEach(function (p, i) {
+        const item = document.createElement('article');
+        item.className = 'post-item';
+        const no = String(i + 1).padStart(3, '0');
+        item.innerHTML =
+            '<div class="post-side">' +
+            '<span class="post-no">№ ' + no + '</span>' +
             '<time class="post-time">' + escapeHtml(p.time) + '</time>' +
             '</div>' +
-            '<p class="post-text">' + escapeHtml(p.text) + '</p>';
-        postList.appendChild(card);
+            '<div class="post-main">' +
+            '<span class="post-tag">' + escapeHtml(p.tag) + '</span>' +
+            '<p class="post-text">' + escapeHtml(p.text) + '</p>' +
+            '</div>';
+        postList.appendChild(item);
     });
     document.getElementById('streamCount').textContent = D.posts.length + ' 条';
 
-    // ---------- 渲染社交链接 ----------
+    // ---------- 铭牌状态条 ----------
+    const latestTime = D.posts.length ? D.posts[0].time : '—';
+    document.getElementById('heroCount').textContent = D.posts.length;
+    document.getElementById('heroUpdated').textContent = latestTime;
+
+    // ---------- 渲染社交链接（纯文字） ----------
     const socialsEl = document.getElementById('socials');
     D.socials.forEach(function (s) {
         const a = document.createElement('a');
         a.className = 'social-link';
+        a.textContent = s.label;
         a.title = s.label;
         a.setAttribute('aria-label', s.label);
-        a.innerHTML = '<i class="' + s.icon + '"></i>';
         if (s.href) {
             a.href = s.href;
             if (s.href.indexOf('mailto:') !== 0) {
@@ -105,52 +114,50 @@
         faqEl.appendChild(details);
     });
 
-    // ---------- 滚动入场 ----------
-    const cards = document.querySelectorAll('.post-card');
-    if ('IntersectionObserver' in window) {
-        const io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (en) {
-                if (en.isIntersecting) {
-                    en.target.classList.add('visible');
-                    io.unobserve(en.target);
-                }
-            });
-        }, { threshold: 0.12 });
-        cards.forEach(function (c) { io.observe(c); });
-    } else {
-        cards.forEach(function (c) { c.classList.add('visible'); });
-    }
-
-    // ---------- 主题切换 ----------
+    // ---------- 主题切换（day / night，兼容旧值迁移） ----------
     const themeToggle = document.getElementById('themeToggle');
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    const heroThemeEl = document.getElementById('heroTheme');
+
+    const ICON_SUN = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>';
+    const ICON_MOON = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+
+    // 旧值 cyber/minimal → 新值 night/day 迁移映射
+    function migrateTheme(raw) {
+        if (raw === 'cyber') return 'night';
+        if (raw === 'minimal') return 'day';
+        if (raw === 'night' || raw === 'day') return raw;
+        return 'night';
+    }
 
     function applyTheme(theme, save) {
         document.body.setAttribute('data-theme', theme);
-        const isCyber = theme === 'cyber';
-        themeToggle.innerHTML = isCyber ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-        themeToggle.title = isCyber ? '切换到极简' : '切换到赛博';
-        themeColorMeta.setAttribute('content', isCyber ? '#0a0a12' : '#f7f7f4');
+        const isNight = theme === 'night';
+        themeToggle.innerHTML = isNight ? ICON_SUN : ICON_MOON;
+        themeToggle.title = isNight ? '切换到日间' : '切换到夜间';
+        themeToggle.setAttribute('aria-label', themeToggle.title);
+        themeColorMeta.setAttribute('content', isNight ? '#14110E' : '#F4EFE4');
+        heroThemeEl.textContent = isNight ? '夜' : '日';
         if (save) { try { localStorage.setItem('dede-theme-v3', theme); } catch (e) {} }
     }
 
-    let currentTheme = 'cyber';
-    try { currentTheme = localStorage.getItem('dede-theme-v3') || 'cyber'; } catch (e) {}
+    let currentTheme = 'night';
+    try { currentTheme = migrateTheme(localStorage.getItem('dede-theme-v3')); } catch (e) {}
     applyTheme(currentTheme, false);
 
     themeToggle.addEventListener('click', function (e) {
         e.stopPropagation();
-        currentTheme = currentTheme === 'cyber' ? 'minimal' : 'cyber';
+        currentTheme = currentTheme === 'night' ? 'day' : 'night';
         applyTheme(currentTheme, true);
-        showToast(currentTheme === 'cyber' ? '已切换到赛博' : '已切换到极简');
+        showToast(currentTheme === 'night' ? '已切换到夜间' : '已切换到日间');
     });
 
     // ---------- 彩蛋入口按钮 ----------
     const eggBtn = document.getElementById('eggBtn');
     eggBtn.addEventListener('click', function (e) {
         e.stopPropagation();
-        if (currentTheme === 'minimal') {
-            showToast('极简模式没有彩蛋');
+        if (currentTheme === 'day') {
+            showToast('日间模式没有彩蛋');
             return;
         }
         if (window.DEDE_EGG) {
@@ -163,6 +170,7 @@
 
     // ---------- 43 彩蛋 ----------
     const easterEgg = document.getElementById('easterEgg');
+    const heroNo = document.getElementById('heroNo');
     let isFortyThree = false;
     let originalTexts = new Map();
 
@@ -223,6 +231,13 @@
         if (!isFortyThree) {
             setAllTextTo43();
             isFortyThree = true;
+            // 彩蛋：铭牌编号翻转（400ms）
+            if (heroNo) {
+                heroNo.classList.remove('flip');
+                void heroNo.offsetWidth;
+                heroNo.classList.add('flip');
+                setTimeout(function () { heroNo.classList.remove('flip'); }, 400);
+            }
         } else {
             restoreAllText();
             isFortyThree = false;
