@@ -3,30 +3,8 @@
    两套风格：赛博（cyber）/ 极简（minimal）
    ============================================================ */
 
-/* ---------- 主题变量 ---------- */
-body[data-theme="cyber"] {
-    --bg: #0a0a12;
-    --bg-grad: radial-gradient(130% 100% at 50% -10%, #1a1840 0%, #0a0a12 58%);
-    --bg-2: #12102a;
-    --text-1: #f2f6ff;
-    --text-2: rgba(242, 246, 255, 0.72);
-    --text-3: rgba(242, 246, 255, 0.46);
-    --accent: #00e5ff;
-    --accent-2: #ff2ec4;
-    --accent-glow: rgba(0, 229, 255, 0.5);
-    --card-bg: rgba(20, 20, 42, 0.55);
-    --card-border: rgba(0, 229, 255, 0.18);
-    --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    --line: rgba(0, 229, 255, 0.14);
-    --tag-bg: rgba(0, 229, 255, 0.12);
-    --tag-color: #7df9ff;
-    --font-display: "Segoe UI", system-ui, -apple-system, sans-serif;
-    --font-body: "Segoe UI", system-ui, -apple-system, sans-serif;
-    --title-glow: 0 0 30px rgba(0, 229, 255, 0.35), 0 0 90px rgba(255, 46, 196, 0.25);
-    --shell-bg: rgba(20, 20, 42, 0.4);
-}
-
-body[data-theme="minimal"] {
+/* ---------- 主题变量（简洁模式） ---------- */
+:root {
     --bg: #f7f7f4;
     --bg-grad: radial-gradient(120% 100% at 50% -10%, #ffffff 0%, #f7f7f4 60%);
     --bg-2: #efefea;
@@ -74,41 +52,8 @@ a { color: inherit; text-decoration: none; }
     pointer-events: none;
 }
 
-/* 赛博主题扫描线 */
-body[data-theme="cyber"]::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: repeating-linear-gradient(0deg, rgba(0, 229, 255, 0.025) 0 1px, transparent 1px 3px);
-    mix-blend-mode: screen;
-}
-
 /* ---------- 内容层级 ---------- */
 .hero, .stream, .footer { position: relative; z-index: 2; }
-
-/* ---------- 风格切换按钮 ---------- */
-.theme-toggle {
-    position: fixed;
-    top: 18px;
-    right: 18px;
-    z-index: 20;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid var(--card-border);
-    background: var(--shell-bg);
-    color: var(--text-1);
-    font-size: 18px;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease, background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease;
-}
-.theme-toggle:hover { transform: translateY(-2px) scale(1.05); }
-.theme-toggle:active { transform: scale(0.94); }
 
 /* ---------- 彩蛋入口按钮 ---------- */
 .egg-btn {
@@ -406,7 +351,6 @@ body.forty-three-mode .post-card {
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 600px) {
-    .theme-toggle { top: 14px; right: 14px; width: 40px; height: 40px; font-size: 16px; }
     .stream { padding: 30px 18px 60px; }
     .stream-head h2 { font-size: 24px; }
     .post-card { padding: 18px 18px; border-radius: 15px; }
