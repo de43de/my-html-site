@@ -1,29 +1,49 @@
 /* ============================================================
-   彩蛋交互层：一次性乱码水花 → 「43」，600ms 内结束
-   canvas 平时不渲染，仅在触发时短暂绘制。
-   触发：底部「43」按钮、点击空白背景（夜间主题）。
+   终端乱码团块：绿色乱码字符聚成一团，带惯性和拖尾
+   - 桌面：团块追鼠标（速度累积 + 阻尼，有惯性冲过再回头），追上触发彩蛋
+   - 移动端：团块随机游走 + 边界反弹，点击空白处触发彩蛋
+   - 彩蛋（每次打开网页仅一次）：渐变黑屏 → 从触发点乱码水花扩散
+     → 逐渐变成「43」→ 黑幕淡出消失
    ============================================================ */
 (function () {
     const canvas = document.getElementById('glitchCanvas');
-    if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
+    const GREEN = '#00ff41';
     const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>/\\|{}[]#$%&*+=?~^@;:.,!';
     const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 600;
-    const DURATION = 600;   // ms，一次性结束
+    const FONT_SIZE = isMobile ? 9 : 10;
 
     let W = 0, H = 0, DPR = 1;
-    let burst = null;       // { x, y, t0, parts }
-    let rafId = null;
+    let inited = false;
 
-    function theme() {
-        return document.body.getAttribute('data-theme') === 'day' ? 'day' : 'night';
-    }
-    function accent() {
-        return theme() === 'day' ? '#8A5A1C' : '#D9A85C';
-    }
+    // ---------- 团块 ----------
+    const blob = { x: 0, y: 0, vx: 0, vy: 0 };
+    const BLOB_R = isMobile ? 66 : 100;
+    const PARTICLE_N = isMobile ? 120 : 180;
+    const particles = [];
+    const wander = { x: 0, y: 0 };
+    let mouse = { x: 0, y: 0 };
+
+    // ---------- 状态 ----------
+    let state = 'idle';   // idle | darken | wave | recover
+    let stateTime = 0;
+    let passiveTriggered = false;   // 被动触发（团块抓鼠标）仅一次
+    let blackAlpha = 0;
+    let lastTheme = null;
+    const wave = [];
+
     function randomChar() {
         return CHARS[(Math.random() * CHARS.length) | 0];
+    }
+
+    function currentTheme() {
+        return document.body.getAttribute('data-theme') === 'minimal' ? 'minimal' : 'cyber';
+    }
+
+    // 团块字符：极简主题为纯句号，赛博为乱码
+    function blobChar() {
+        return currentTheme() === 'minimal' ? '.' : randomChar();
     }
 
     function resize() {
@@ -35,90 +55,259 @@
         canvas.style.width = W + 'px';
         canvas.style.height = H + 'px';
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        if (!inited) {
+            blob.x = W / 2; blob.y = H / 2;
+            mouse.x = W / 2; mouse.y = H / 2;
+            wander.x = W / 2; wander.y = H / 2;
+            inited = true;
+        }
     }
 
-    function startEgg(nx, ny) {
-        resize();
-        const n = isMobile ? 120 : 200;
-        const parts = [];
-        for (let i = 0; i < n; i++) {
+    function spawnBlob() {
+        particles.length = 0;
+        for (let i = 0; i < PARTICLE_N; i++) {
             const ang = Math.random() * Math.PI * 2;
-            parts.push({
-                ang: ang,
-                speed: 0.15 + Math.random() * 0.5,
-                born: Math.random() * 0.25,
-                switchAt: 0.35 + Math.random() * 0.4,
-                c: randomChar(),
-                to43: false
+            const r = Math.sqrt(Math.random()) * BLOB_R;
+            particles.push({
+                ox: Math.cos(ang) * r,
+                oy: Math.sin(ang) * r,
+                c: blobChar()
             });
         }
-        burst = { x: nx, y: ny, t0: performance.now(), parts: parts };
-        canvas.style.pointerEvents = 'auto';
-        if (!rafId) rafId = requestAnimationFrame(frame);
     }
 
-    function frame(now) {
-        if (!burst) { rafId = null; return; }
-        const dt = now - burst.t0;
-        ctx.clearRect(0, 0, W, H);
+    // ---------- 输入 ----------
+    window.addEventListener('mousemove', function (e) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    }, { passive: true });
 
-        // 短暂暗化（前 40%），快速淡出
-        if (dt < DURATION * 0.4) {
-            ctx.fillStyle = 'rgba(20, 17, 14, ' + (0.35 * (dt / (DURATION * 0.4))) + ')';
-            ctx.fillRect(0, 0, W, H);
-        }
-
-        ctx.fillStyle = accent();
-        ctx.font = (isMobile ? 9 : 10) + 'px "Courier New", monospace';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        const p = Math.min(dt / DURATION, 1);
-        for (let i = 0; i < burst.parts.length; i++) {
-            const pt = burst.parts[i];
-            const life = p - pt.born;
-            if (life < 0 || life > 1) continue;
-            if (!pt.to43 && life >= pt.switchAt) {
-                pt.to43 = true;
-                pt.c = Math.random() < 0.5 ? '4' : '3';
-            }
-            const r = pt.speed * life;
-            const x = burst.x * W + Math.cos(pt.ang) * r * W;
-            const y = burst.y * H + Math.sin(pt.ang) * r * H;
-            ctx.globalAlpha = Math.max(0, 1 - life);
-            ctx.fillText(pt.c, x, y);
-        }
-        ctx.globalAlpha = 1;
-
-        if (dt >= DURATION) {
-            ctx.clearRect(0, 0, W, H);
-            burst = null;
-            rafId = null;
-            canvas.style.pointerEvents = 'none';
-            return;
-        }
-        rafId = requestAnimationFrame(frame);
-    }
-
-    // 输入：点击空白背景触发（夜间主题）
+    // 内容板块选择器：点击这些区域不触发彩蛋，只有点空白背景才触发
     const UI_SELECTOR = 'a, button, summary, input, textarea, select, [role="button"], ' +
-        'article, h1, h2, h3, p, time, details, .hero, .stream, .footer, .tools-view, .game-view';
+        'article, h1, h2, h3, p, time, details, ' +
+        '.hero-inner, .stream-head, .game-shell, .socials, .copyright, .beian, .easter-egg, .tools-view, .game-view';
+
     window.addEventListener('click', function (e) {
         const t = e.target;
         if (t && t.closest && t.closest(UI_SELECTOR)) return;
         tryActiveTrigger(e.clientX / W, e.clientY / H);
     }, true);
 
+    // ---------- 触发 ----------
+    function startEgg(nx, ny) {
+        wave.length = 0;
+        pushWave(nx, ny);
+        state = 'darken';
+        stateTime = 0;
+        blackAlpha = 0;
+        canvas.style.pointerEvents = 'auto';   // 黑屏期间拦截点击，防穿透到底层元素
+    }
+
+    // 主动触发（点击）：不限次数；黑屏中继续点则叠加水花（放烟花）
+    // 句号模式（极简主题）下禁止点击触发
     function tryActiveTrigger(nx, ny) {
-        if (theme() === 'day') return;
+        if (currentTheme() === 'minimal') return;
+        if (state === 'idle') {
+            startEgg(nx, ny);
+        } else if (state === 'darken') {
+            pushWave(nx, ny);
+        } else {   // wave / recover
+            pushWave(nx, ny);
+            state = 'wave';
+            stateTime = 0;
+            blackAlpha = 1;
+        }
+    }
+
+    // 被动触发（桌面团块抓鼠标）：仅一次
+    function tryPassiveTrigger(nx, ny) {
+        if (passiveTriggered || state !== 'idle') return;
+        passiveTriggered = true;
         startEgg(nx, ny);
     }
 
-    window.addEventListener('resize', function () {
-        if (burst) resize();
-    }, { passive: true });
+    // ---------- 团块物理（惯性） ----------
+    function updateBlob(dt) {
+        if (isMobile) {
+            // 平滑随机游走：朝随机目标点匀速漂移（带轻微惯性），到达/定期换目标，边界反弹
+            const margin = BLOB_R * 1.1;
+            if (Math.random() < 0.015) {
+                wander.x = margin + Math.random() * (W - margin * 2);
+                wander.y = margin + Math.random() * (H - margin * 2);
+            }
+            const dx = wander.x - blob.x;
+            const dy = wander.y - blob.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 12) {
+                wander.x = margin + Math.random() * (W - margin * 2);
+                wander.y = margin + Math.random() * (H - margin * 2);
+            }
+            const SPEED = 80;   // px/s，缓慢漂移
+            if (dist > 1) {
+                const tvx = (dx / dist) * SPEED;
+                const tvy = (dy / dist) * SPEED;
+                blob.vx += (tvx - blob.vx) * 0.06;
+                blob.vy += (tvy - blob.vy) * 0.06;
+            }
+            if (blob.x < margin) { blob.x = margin; wander.x = margin + Math.random() * W; }
+            if (blob.x > W - margin) { blob.x = W - margin; wander.x = Math.random() * (W - margin); }
+            if (blob.y < margin) { blob.y = margin; wander.y = margin + Math.random() * H; }
+            if (blob.y > H - margin) { blob.y = H - margin; wander.y = Math.random() * (H - margin); }
+        } else {
+            // 追鼠标（速度累积 + 阻尼，冲过头再回头）
+            blob.vx += (mouse.x - blob.x) * 1.5 * dt;
+            blob.vy += (mouse.y - blob.y) * 1.5 * dt;
+            blob.vx *= 0.90;
+            blob.vy *= 0.90;
+            const sp = Math.hypot(blob.vx, blob.vy);
+            const MAXV = 900;
+            if (sp > MAXV) { blob.vx *= MAXV / sp; blob.vy *= MAXV / sp; }
+        }
+        blob.x += blob.vx * dt;
+        blob.y += blob.vy * dt;
 
-    // 初始测量（避免首次点击时 W/H 为 0）
+        // 字符 glitch 闪烁
+        for (let k = 0; k < 3; k++) {
+            particles[(Math.random() * particles.length) | 0].c = blobChar();
+        }
+
+        // 桌面：团块追上鼠标被动触发（仅一次）
+        if (!isMobile) {
+            if (Math.hypot(blob.x - mouse.x, blob.y - mouse.y) < BLOB_R * 0.45) {
+                tryPassiveTrigger(blob.x / W, blob.y / H);
+            }
+        }
+    }
+
+    function drawBlob() {
+        ctx.fillStyle = currentTheme() === 'minimal' ? '#000' : GREEN;
+        ctx.font = FONT_SIZE + 'px "Courier New", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            ctx.fillText(p.c, blob.x + p.ox, blob.y + p.oy);
+        }
+    }
+
+    // ---------- 彩蛋：水花 ----------
+    const MAX_WAVE = isMobile ? 2000 : 3000;
+    function pushWave(cx, cy) {
+        const n = isMobile ? 280 : 420;
+        for (let i = 0; i < n; i++) {
+            wave.push({
+                cx: cx,
+                cy: cy,
+                ang: Math.random() * Math.PI * 2,
+                r: 0,
+                speed: 0.25 + Math.random() * 0.6,
+                born: Math.random() * 0.4,
+                life: 0,
+                switchAt: 0.5 + Math.random() * 1.0,
+                c: randomChar(),
+                to43: false
+            });
+        }
+        // 连续点击叠加过多时，裁掉最老的（已淡出）粒子，防卡顿
+        if (wave.length > MAX_WAVE) {
+            wave.splice(0, wave.length - MAX_WAVE);
+        }
+    }
+
+    function updateWave(dt) {
+        for (let i = 0; i < wave.length; i++) {
+            const p = wave[i];
+            p.life += dt;
+            if (p.life < p.born || p.life > 3.0) continue;
+            p.r += p.speed * dt;
+            if (p.life >= p.switchAt) {
+                if (!p.to43) { p.to43 = true; p.c = '43'; }
+            } else if (Math.random() < 0.25) {
+                p.c = randomChar();
+            }
+        }
+    }
+
+    function drawWave(fade) {
+        ctx.font = FONT_SIZE + 'px "Courier New", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (let i = 0; i < wave.length; i++) {
+            const p = wave[i];
+            if (p.life < p.born || p.life > 3.0) continue;
+            const x = p.cx * W + Math.cos(p.ang) * p.r * W;
+            const y = p.cy * H + Math.sin(p.ang) * p.r * H;
+            ctx.globalAlpha = fade * Math.max(0, 1 - p.life / 3.0);
+            ctx.fillStyle = GREEN;
+            ctx.fillText(p.c, x, y);
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    function updateEgg(dt) {
+        stateTime += dt;
+        if (state === 'darken') {
+            blackAlpha = Math.min(stateTime / 0.6, 1);
+            if (stateTime > 0.6) { state = 'wave'; stateTime = 0; }
+        } else if (state === 'wave') {
+            blackAlpha = 1;
+            updateWave(dt);
+            if (stateTime > 2.4) { state = 'recover'; stateTime = 0; }
+        } else if (state === 'recover') {
+            blackAlpha = Math.max(0, 1 - stateTime / 1.0);
+            updateWave(dt);
+            if (stateTime > 1.0) { state = 'idle'; stateTime = 0; wave.length = 0; canvas.style.pointerEvents = 'none'; }
+        }
+    }
+
+    function drawEgg() {
+        if (blackAlpha > 0) {
+            ctx.fillStyle = 'rgba(0, 0, 0, ' + blackAlpha + ')';
+            ctx.fillRect(0, 0, W, H);
+        }
+        if (state === 'wave' || state === 'recover') {
+            drawWave(blackAlpha);
+        }
+    }
+
+    // ---------- 主循环 ----------
+    let last = performance.now();
+
+    function frame(now) {
+        const dt = Math.min((now - last) / 1000, 0.1);
+        last = now;
+
+        // 主题切换时刷新团块（minimal 纯句号黑色 / cyber 绿色乱码）
+        const th = currentTheme();
+        if (th !== lastTheme) {
+            lastTheme = th;
+            for (let i = 0; i < particles.length; i++) particles[i].c = blobChar();
+        }
+
+        if (state === 'idle') {
+            // 拖尾：逐帧擦除（磷光残影，保持透明不盖背景）
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+            ctx.fillRect(0, 0, W, H);
+            ctx.globalCompositeOperation = 'source-over';
+            updateBlob(dt);
+            drawBlob();
+        } else {
+            ctx.clearRect(0, 0, W, H);
+            updateEgg(dt);
+            drawEgg();
+        }
+
+        requestAnimationFrame(frame);
+    }
+
+    // ---------- 启动 ----------
     resize();
+    spawnBlob();
+    wander.x = Math.random() * W;
+    wander.y = Math.random() * H;
+    window.addEventListener('resize', resize, { passive: true });
+    requestAnimationFrame(frame);
 
     // 暴露主动触发接口，供页面按钮调用
     window.DEDE_EGG = { burst: tryActiveTrigger };
