@@ -339,35 +339,48 @@
     }
 
     // ---------- π 搜索 ----------
-    // 在 π 的小数（前 1 亿位，js/pi0.txt ~ pi9.txt 十个分片拼接成 window.PI_DIGITS）里搜索数字串，
-    // 给出首次出现的位置（小数点后第几位起，1 起始），并附上下文片段。
-    // 数据 10 个分片共约 100MB（传输时 gzip 压到约 40MB），首次打开该工具时按需加载，不影响首屏。
+    // 在 π 的小数里搜索数字串，给出首次出现的位置（小数点后第几位起，1 起始），并附上下文片段。
+    // π 数据不下载：首次打开该工具时，在浏览器后台线程（js/pi-worker.js）用 Chudnovsky 算法
+    // 现场计算前 100 万位（主流机器约 10~20 秒），结果存 window.PI_DIGITS。
     let piLoading = false, piCbs = [];
-    const PI_CHUNKS = 10; // 1 亿位切成 10 个 1000 万位文件，规避单文件过大
+    const PI_TARGET = 1000000; // 实时计算 π 前 100 万位
     function loadPi(cb) {
         if (window.PI_DIGITS) { cb(true); return; }
         piCbs.push(cb);
         if (piLoading) return;
         piLoading = true;
-        Promise.all(Array.from({ length: PI_CHUNKS }, function (_, i) {
-            return fetch('js/pi' + i + '.txt').then(function (r) {
-                if (!r.ok) throw new Error('http ' + r.status);
-                return r.text();
-            });
-        })).then(function (parts) {
-            window.PI_DIGITS = parts.join('');
-            piLoading = false;
-            piCbs.forEach(function (f) { f(true); });
-            piCbs = [];
-        }).catch(function () {
+        try {
+            const w = new Worker('js/pi-worker.js');
+            w.onmessage = function (e) {
+                const msg = e.data;
+                if (msg.type === 'done') {
+                    window.PI_DIGITS = msg.digits;
+                    piLoading = false;
+                    piCbs.forEach(function (f) { f(true); });
+                    piCbs = [];
+                    w.terminate();
+                } else if (msg.type === 'error') {
+                    piLoading = false;
+                    piCbs.forEach(function (f) { f(false); });
+                    piCbs = [];
+                    w.terminate();
+                }
+            };
+            w.onerror = function () {
+                piLoading = false;
+                piCbs.forEach(function (f) { f(false); });
+                piCbs = [];
+            };
+            w.postMessage({ digits: PI_TARGET });
+        } catch (err) {
             piLoading = false;
             piCbs.forEach(function (f) { f(false); });
             piCbs = [];
-        });
+        }
     }
     function piHtml() {
         return '<div class="tool-pane">' +
-            '<div class="tool-block"><div class="tool-label">在 π 的小数中搜索数字串（前 1 亿位，位置为小数点后第几位、从 1 起）</div>' +
+            '<div class="tool-block"><div class="tool-label">在 π 的小数中搜索数字串（实时计算前 100 万位，位置为小数点后第几位、从 1 起）</div>' +
             '<input id="piIn" class="tool-input" placeholder="如 43、520、19990815…" inputmode="numeric" spellcheck="false"></div>' +
             '<div class="tool-row">' +
             '<button class="mini-btn" data-act="search">搜索</button>' +
@@ -421,12 +434,12 @@
             if (e.key === 'Enter') { e.preventDefault(); search(); }
         });
 
-        // 预加载 π 数据（约 100MB，传输 gzip 压到约 40MB）
+        // 预加载 π 数据（浏览器后台实时计算前 100 万位，约 10~20 秒）
         if (!window.PI_DIGITS) {
-            out.textContent = '正在加载 π 数据（约 40MB，首次较慢，稍候）…';
+            out.textContent = '正在实时计算 π 前 100 万位（约 10~20 秒，完成后即可搜索）…';
             loadPi(function (ok) {
                 if (ok) out.textContent = '';
-                else { out.textContent = 'π 数据加载失败，请刷新重试。'; out.classList.add('err'); }
+                else { out.textContent = 'π 计算失败，请刷新重试。'; out.classList.add('err'); }
             });
         }
         return null;
