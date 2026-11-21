@@ -340,11 +340,11 @@
 
     // ---------- π 搜索 ----------
     // 在 π 的小数里搜索数字串，给出首次出现的位置（小数点后第几位起，1 起始），并附上下文片段。
-    // π 数据不下载：首次打开该工具时，在浏览器后台线程（js/pi-worker.js）用 Chudnovsky 算法
-    // 现场计算前 100 万位（主流机器约 10~20 秒），结果存 window.PI_DIGITS。
+    // π 数据不下载：首次打开该工具时，在浏览器后台线程（js/pi-worker.js）用 gmp-wasm（GMP/MPFR）
+    // 现场计算前 1 亿位（主流电脑约 10~15 分钟，移动端会慢很多），结果存 window.PI_DIGITS。
     let piLoading = false, piCbs = [];
-    const PI_TARGET = 1000000; // 实时计算 π 前 100 万位
-    function loadPi(cb) {
+    const PI_TARGET = 100000000; // 实时计算 π 前 1 亿位（8 位生日串约 6 成能查到）
+    function loadPi(cb, onStart) {
         if (window.PI_DIGITS) { cb(true); return; }
         piCbs.push(cb);
         if (piLoading) return;
@@ -353,8 +353,11 @@
             const w = new Worker('js/pi-worker.js');
             w.onmessage = function (e) {
                 const msg = e.data;
-                if (msg.type === 'done') {
+                if (msg.type === 'start') {
+                    if (onStart) onStart();
+                } else if (msg.type === 'done') {
                     window.PI_DIGITS = msg.digits;
+                    window.PI_ELAPSED = msg.elapsed;
                     piLoading = false;
                     piCbs.forEach(function (f) { f(true); });
                     piCbs = [];
@@ -371,7 +374,7 @@
                 piCbs.forEach(function (f) { f(false); });
                 piCbs = [];
             };
-            w.postMessage({ digits: PI_TARGET });
+            w.postMessage({ cmd: 'compute', digits: PI_TARGET });
         } catch (err) {
             piLoading = false;
             piCbs.forEach(function (f) { f(false); });
@@ -380,7 +383,7 @@
     }
     function piHtml() {
         return '<div class="tool-pane">' +
-            '<div class="tool-block"><div class="tool-label">在 π 的小数中搜索数字串（实时计算前 100 万位，位置为小数点后第几位、从 1 起）</div>' +
+            '<div class="tool-block"><div class="tool-label">在 π 的小数中搜索数字串（现场计算前 1 亿位，位置为小数点后第几位、从 1 起）</div>' +
             '<input id="piIn" class="tool-input" placeholder="如 43、520、19990815…" inputmode="numeric" spellcheck="false"></div>' +
             '<div class="tool-row">' +
             '<button class="mini-btn" data-act="search">搜索</button>' +
@@ -393,12 +396,13 @@
         const input = root.querySelector('#piIn');
         const out = root.querySelector('#piOut');
         let lastQuery = '', lastEnd = 0, searched = false;
+        let timer = null;
 
         function render() {
             const q = input.value.trim();
             if (!q) { out.textContent = '输入要搜索的数字串。'; out.classList.remove('err'); return; }
             if (!/^\d+$/.test(q)) { out.textContent = '只支持纯数字串。'; out.classList.add('err'); return; }
-            if (!window.PI_DIGITS) { out.textContent = 'π 数据加载中，稍候再试…'; out.classList.remove('err'); return; }
+            if (!window.PI_DIGITS) { out.textContent = 'π 还在计算中，稍候再试…'; out.classList.remove('err'); return; }
             const digits = window.PI_DIGITS;
             const total = digits.length;
             const from = (searched && q === lastQuery) ? lastEnd : 0;
@@ -434,15 +438,30 @@
             if (e.key === 'Enter') { e.preventDefault(); search(); }
         });
 
-        // 预加载 π 数据（浏览器后台实时计算前 100 万位，约 10~20 秒）
-        if (!window.PI_DIGITS) {
-            out.textContent = '正在实时计算 π 前 100 万位（约 10~20 秒，完成后即可搜索）…';
+        // 预加载 π 数据（浏览器后台现场计算前 1 亿位）
+        if (window.PI_DIGITS) {
+            out.textContent = 'π 前 1 亿位已就绪，可搜索。';
+        } else {
+            const t0 = Date.now();
+            out.textContent = '正在现场计算 π 前 1 亿位（约 10~15 分钟，建议电脑端，计算期间别关页面）…';
             loadPi(function (ok) {
-                if (ok) out.textContent = '';
-                else { out.textContent = 'π 计算失败，请刷新重试。'; out.classList.add('err'); }
+                if (timer) { clearInterval(timer); timer = null; }
+                if (ok) {
+                    const el = window.PI_ELAPSED ? '（用时 ' + Math.round(window.PI_ELAPSED / 1000) + ' 秒）' : '';
+                    out.textContent = 'π 前 1 亿位已就绪，可搜索。' + el;
+                } else {
+                    out.textContent = 'π 计算失败，请刷新重试。';
+                    out.classList.add('err');
+                }
+            }, function () {
+                timer = setInterval(function () {
+                    const s = Math.floor((Date.now() - t0) / 1000);
+                    const m = Math.floor(s / 60);
+                    out.textContent = '正在现场计算 π 前 1 亿位（约 10~15 分钟，建议电脑端，计算期间别关页面）…已等待 ' + m + ' 分 ' + (s % 60) + ' 秒';
+                }, 1000);
             });
         }
-        return null;
+        return function () { if (timer) { clearInterval(timer); timer = null; } };
     }
 
     // ---------- 工具注册 ----------
