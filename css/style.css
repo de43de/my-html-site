@@ -1,51 +1,44 @@
 /* ============================================================
-   dede · 想法与分享
-   两套风格：赛博（cyber）/ 极简（minimal）
+   dede · 铭牌 · № 43
+   两套主题：night（夜间）/ day（日间）
+   强调色统一为黄铜，警示色铁锈红；层次用发丝线与 inset 凹槽。
    ============================================================ */
 
-/* ---------- 主题变量 ---------- */
-body[data-theme="cyber"] {
-    --bg: #0a0a12;
-    --bg-grad: radial-gradient(130% 100% at 50% -10%, #1a1840 0%, #0a0a12 58%);
-    --bg-2: #12102a;
-    --text-1: #f2f6ff;
-    --text-2: rgba(242, 246, 255, 0.72);
-    --text-3: rgba(242, 246, 255, 0.46);
-    --accent: #00e5ff;
-    --accent-2: #ff2ec4;
-    --accent-glow: rgba(0, 229, 255, 0.5);
-    --card-bg: rgba(20, 20, 42, 0.55);
-    --card-border: rgba(0, 229, 255, 0.18);
-    --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    --line: rgba(0, 229, 255, 0.14);
-    --tag-bg: rgba(0, 229, 255, 0.12);
-    --tag-color: #7df9ff;
-    --font-display: "Segoe UI", system-ui, -apple-system, sans-serif;
-    --font-body: "Segoe UI", system-ui, -apple-system, sans-serif;
-    --title-glow: 0 0 30px rgba(0, 229, 255, 0.35), 0 0 90px rgba(255, 46, 196, 0.25);
-    --shell-bg: rgba(20, 20, 42, 0.4);
+/* ---------- 字体（三族分工，全部系统字体栈） ---------- */
+:root {
+    --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Mono", Consolas, "SF Mono", monospace;
+    --font-serif: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "STSong", SimSun, serif;
+    --font-sans: "PingFang SC", "Microsoft YaHei", -apple-system, "Segoe UI", sans-serif;
 }
 
-body[data-theme="minimal"] {
-    --bg: #f7f7f4;
-    --bg-grad: radial-gradient(120% 100% at 50% -10%, #ffffff 0%, #f7f7f4 60%);
-    --bg-2: #efefea;
-    --text-1: #141414;
-    --text-2: rgba(20, 20, 20, 0.66);
-    --text-3: rgba(20, 20, 20, 0.42);
-    --accent: #141414;
-    --accent-2: #555555;
-    --accent-glow: rgba(0, 0, 0, 0.08);
-    --card-bg: #ffffff;
-    --card-border: #e6e6e1;
-    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
-    --line: #e6e6e1;
-    --tag-bg: #f0f0ec;
-    --tag-color: #555555;
-    --font-display: Georgia, "Times New Roman", serif;
-    --font-body: -apple-system, "Helvetica Neue", "PingFang SC", sans-serif;
-    --title-glow: none;
-    --shell-bg: #ffffff;
+/* ---------- 主题变量 ---------- */
+body[data-theme="night"] {
+    --bg: #14110E;                          /* 底：暖黑，禁止纯黑 */
+    --surface: #1C1814;                     /* 表面：暖深棕 */
+    --hairline: rgba(232, 220, 192, 0.14);  /* 发丝线：暖象牙半透明 */
+    --text-1: #E8DCC0;                      /* 正文：暖象牙 */
+    --text-2: #A7967A;                      /* 次级：暖沙灰 */
+    --accent: #D9A85C;                      /* 强调：黄铜 */
+    --accent-ink: #14110E;                  /* 强调色上的文字 */
+    --rust: #D2543A;                        /* 警示：铁锈红 */
+    --recess: rgba(0, 0, 0, 0.24);          /* 内凹阴影 */
+    --inset-hi: rgba(232, 220, 192, 0.05);  /* 凹槽高光 */
+    --overlay: rgba(20, 17, 14, 0.66);      /* 面板遮罩 */
+    --stage: #100D0B;                       /* 游戏屏幕底 */
+}
+body[data-theme="day"] {
+    --bg: #F4EFE4;                          /* 底：暖米 */
+    --surface: #FBF7EE;                     /* 表面：暖白，禁止纯白 */
+    --hairline: #D8CDB8;                    /* 发丝线：暖沙 */
+    --text-1: #1E1A14;                      /* 正文：暖黑 */
+    --text-2: #6B5F4C;                      /* 次级：暖棕 */
+    --accent: #8A5A1C;                      /* 强调：深黄铜 */
+    --accent-ink: #FBF7EE;                  /* 强调色上的文字 */
+    --rust: #A83A22;                        /* 警示：铁锈红 */
+    --recess: rgba(0, 0, 0, 0.05);
+    --inset-hi: rgba(30, 26, 20, 0.05);
+    --overlay: rgba(30, 26, 20, 0.28);
+    --stage: #14110E;                       /* 游戏屏幕恒为暗屏（设备屏） */
 }
 
 /* ---------- 重置 ---------- */
@@ -54,18 +47,25 @@ body[data-theme="minimal"] {
 html { scroll-behavior: smooth; }
 
 body {
-    font-family: var(--font-body);
-    background: var(--bg-grad) fixed;
+    font-family: var(--font-sans);
+    background: var(--bg);
     color: var(--text-1);
-    line-height: 1.6;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
-    transition: background-color 0.45s ease, color 0.45s ease;
+    transition: background-color 0.3s ease-out, color 0.3s ease-out;
 }
 
 a { color: inherit; text-decoration: none; }
 
-/* ---------- 终端乱码交互层 ---------- */
+/* ---------- 全局焦点（focus-visible：2px 实线 + 2px offset） ---------- */
+:focus { outline: none; }
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* ---------- 终端乱码交互层（仅彩蛋触发时短暂渲染） ---------- */
 #glitchCanvas {
     position: fixed;
     inset: 0;
@@ -74,349 +74,473 @@ a { color: inherit; text-decoration: none; }
     pointer-events: none;
 }
 
-/* 赛博主题扫描线 */
-body[data-theme="cyber"]::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: repeating-linear-gradient(0deg, rgba(0, 229, 255, 0.025) 0 1px, transparent 1px 3px);
-    mix-blend-mode: screen;
-}
-
 /* ---------- 内容层级 ---------- */
 .hero, .stream, .footer { position: relative; z-index: 2; }
 
-/* ---------- 风格切换按钮 ---------- */
+/* ---------- 风格切换按钮（方形铭牌） ---------- */
 .theme-toggle {
     position: fixed;
-    top: 18px;
-    right: 18px;
-    z-index: 20;
+    top: 16px;
+    right: 16px;
+    z-index: 60;
     width: 44px;
     height: 44px;
-    border-radius: 50%;
-    border: 1px solid var(--card-border);
-    background: var(--shell-bg);
-    color: var(--text-1);
-    font-size: 18px;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease, background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease;
-}
-.theme-toggle:hover { transform: translateY(-2px) scale(1.05); }
-.theme-toggle:active { transform: scale(0.94); }
-
-/* ---------- 彩蛋入口按钮 ---------- */
-.egg-btn {
-    position: fixed;
-    bottom: calc(22px + env(safe-area-inset-bottom, 0px));
-    right: 22px;
-    z-index: 20;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: 1px solid var(--card-border);
-    background: var(--shell-bg);
-    color: var(--accent);
-    font-size: 17px;
-    font-weight: 700;
-    font-family: "Courier New", monospace;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease, background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease;
-}
-.egg-btn:hover { transform: translateY(-2px) scale(1.08); }
-.egg-btn:active { transform: scale(0.92); }
-
-/* ---------- 首屏 ---------- */
-.hero {
-    min-height: 100vh;
-    min-height: 100svh;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    padding: 24px;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    color: var(--text-1);
+    cursor: pointer;
+    border-radius: 0;
+    transition: color 0.15s ease-out, border-color 0.15s ease-out,
+        background-color 0.3s ease-out;
 }
-.hero-inner {
-    animation: heroIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+.theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+.theme-toggle:active { transform: translateY(1px); }
+.theme-toggle svg { display: block; }
+
+/* ---------- 彩蛋入口按钮（43 号铭牌） ---------- */
+.egg-btn {
+    position: fixed;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    right: 16px;
+    z-index: 60;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border-radius: 0;
+    transition: color 0.15s ease-out, border-color 0.15s ease-out,
+        background-color 0.15s ease-out;
+}
+.egg-btn:hover { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.egg-btn:active { transform: translateY(1px); }
+
+/* ============================================================
+   首屏 · 铭牌
+   ============================================================ */
+.hero {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 96px 24px 96px;   /* 顶部留白 + hero 下 96px 节奏 */
+}
+.hero-inner { width: 100%; }
+
+/* 铭牌：双线边框 + 内凹，表达「刻上去的牌子」 */
+.hero-plate {
+    position: relative;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    padding: 36px 40px 28px;
+    box-shadow: var(--inset-hi) 0 1px 0 0 inset;
+}
+.hero-plate::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid var(--hairline);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
 }
 .hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(64px, 16vw, 150px);
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    line-height: 1;
-    text-shadow: var(--title-glow);
+    font-family: var(--font-serif);
+    font-size: 64px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    color: var(--text-1);
     cursor: default;
     user-select: none;
 }
-.hero-sub {
-    margin-top: 18px;
-    font-size: clamp(15px, 2.4vw, 19px);
+.hero-no {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-top: 8px;
+}
+/* 彩蛋：编号翻转 */
+.hero-no.flip { animation: noFlip 0.4s ease-out; }
+@keyframes noFlip {
+    0% { transform: perspective(500px) rotateX(0deg); }
+    50% { transform: perspective(500px) rotateX(-90deg); }
+    100% { transform: perspective(500px) rotateX(0deg); }
+}
+
+/* 状态条：主题 / 条目总数 / 最后更新 */
+.hero-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 40px;
+    margin-top: 36px;
+    padding-top: 16px;
+    border-top: 1px solid var(--hairline);
+}
+.hero-status-item {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
     color: var(--text-2);
-    letter-spacing: 0.04em;
 }
-@keyframes heroIn {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+.hero-status-item b {
+    font-weight: 400;
+    color: var(--text-1);
 }
-/* ---------- 想法流 ---------- */
+
+/* ============================================================
+   想法流 · 索引条目
+   ============================================================ */
 .stream {
     max-width: 720px;
     margin: 0 auto;
-    padding: 40px 24px 80px;
+    padding: 0 24px 24px;
 }
 .stream-head {
     display: flex;
     align-items: baseline;
-    gap: 12px;
-    margin-bottom: 28px;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--hairline);
+    margin-bottom: 0;
 }
 .stream-head h2 {
-    font-family: var(--font-display);
+    font-family: var(--font-serif);
     font-size: 28px;
-    font-weight: 700;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
 }
 .stream-count {
-    font-size: 13px;
-    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-2);
 }
 
-.post-list {
+.post-list { display: flex; flex-direction: column; }
+
+.post-item {
+    display: grid;
+    grid-template-columns: 128px 1fr;
+    gap: 24px;
+    padding: 24px 0;              /* 上下 24px = 每段 48px 节奏 */
+    border-bottom: 1px solid var(--hairline);
+}
+/* 最新一条：左侧加一条黄铜竖线 */
+.post-item:first-child { position: relative; }
+.post-item:first-child::before {
+    content: "";
+    position: absolute;
+    left: -16px;
+    top: 24px;
+    bottom: 24px;
+    width: 2px;
+    background: var(--accent);
+}
+
+.post-side {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 4px;
 }
-
-.post-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 18px;
-    padding: 22px 24px;
-    box-shadow: var(--card-shadow);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    opacity: 0;
-    transform: translateY(26px);
-    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-        background-color 0.45s ease, border-color 0.45s ease;
-}
-.post-card.visible { opacity: 1; transform: translateY(0); }
-.post-card:hover {
-    transform: translateY(-3px);
-    border-color: var(--accent);
-}
-.post-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-.post-tag {
+.post-no {
+    font-family: var(--font-mono);
     font-size: 12px;
-    font-weight: 600;
-    color: var(--tag-color);
-    background: var(--tag-bg);
-    padding: 3px 10px;
-    border-radius: 20px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    line-height: 1.65;
 }
 .post-time {
+    font-family: var(--font-mono);
     font-size: 12px;
-    color: var(--text-3);
+    letter-spacing: 0.02em;
+    color: var(--text-2);
+}
+
+.post-main {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+.post-tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-2);
 }
 .post-text {
     font-size: 16px;
+    line-height: 1.65;
     color: var(--text-1);
     white-space: pre-wrap;
     word-break: break-word;
 }
 
-/* ---------- 小游戏入口壳子 ---------- */
-.game-shell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 32px;
-    padding: 16px;
-    background: var(--shell-bg);
-    border: 1px dashed var(--card-border);
-    border-radius: 16px;
+/* ============================================================
+   入口 · 控制条
+   ============================================================ */
+.entry-bar { margin-top: 64px; }
+
+.section-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
     color: var(--text-2);
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: border-color 0.3s ease, color 0.3s ease, background-color 0.45s ease;
-}
-.game-shell i { color: var(--accent); }
-.game-shell:hover { border-color: var(--accent); color: var(--text-1); }
-.game-tag {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--tag-color);
-    background: var(--tag-bg);
-    padding: 2px 8px;
-    border-radius: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--hairline);
+    margin-bottom: 0;
 }
 
-/* ---------- 底部 ---------- */
+.entry {
+    display: grid;
+    grid-template-columns: 48px 1fr auto auto;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 4px;
+    border-bottom: 1px solid var(--hairline);
+    color: var(--text-1);
+    transition: background-color 0.15s ease-out;
+}
+.entry-primary { padding: 28px 4px; }   /* 俄罗斯方块主项：更高的行 */
+.entry:hover { background: var(--surface); }
+
+.entry-no {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-2);
+}
+.entry-name {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+}
+.entry-primary .entry-name { font-size: 28px; }
+.entry:hover .entry-name { color: var(--accent); }
+
+.entry-status {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-2);
+}
+.entry-arrow {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--accent);
+    transition: transform 0.15s ease-out;
+}
+.entry:hover .entry-arrow { transform: translateX(1px); }
+
+/* ============================================================
+   页脚 · 编号体系
+   ============================================================ */
 .footer {
-    max-width: 720px;
+    max-width: 1200px;              /* 页脚允许全宽到 1200px（与 hero 一致，刻意不等宽） */
     margin: 0 auto;
-    padding: 60px 24px 40px;
-    text-align: center;
-    color: var(--text-3);
-    border-top: 1px solid var(--line);
+    padding: 80px 24px 40px;        /* 页脚 80px 节奏 */
+    color: var(--text-2);
 }
 
 .socials {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 30px;
+    gap: 8px 20px;
+    max-width: 720px;               /* 正文列宽约束，保证行宽 */
+    margin-bottom: 40px;
 }
 .social-link {
-    width: 42px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.02em;
     color: var(--text-2);
-    font-size: 17px;
-    transition: color 0.25s ease, border-color 0.25s ease, transform 0.25s ease, background-color 0.45s ease;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s ease-out, border-color 0.15s ease-out;
 }
-.social-link:hover {
-    color: var(--accent);
-    border-color: var(--accent);
-    transform: translateY(-2px);
-}
+.social-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.social-link:active { color: var(--accent); }
 
-.faq {
-    text-align: left;
-    margin-bottom: 30px;
-}
-.faq details {
-    border-bottom: 1px solid var(--line);
-}
+.faq { max-width: 720px; margin-bottom: 40px; }   /* 正文列宽约束 */
+.faq details { border-bottom: 1px solid var(--hairline); }
 .faq summary {
     list-style: none;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 13px 2px;
-    font-size: 15px;
-    color: var(--text-2);
+    padding: 16px 2px;
+    font-size: 16px;
+    color: var(--text-1);
     cursor: pointer;
-    transition: color 0.25s ease;
+    transition: color 0.15s ease-out;
 }
 .faq summary::-webkit-details-marker { display: none; }
-.faq summary:hover { color: var(--text-1); }
+.faq summary:hover { color: var(--accent); }
 .faq summary::after {
-    content: "\f078";
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    font-size: 12px;
-    color: var(--text-3);
-    transition: transform 0.25s ease;
+    content: "+";
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--text-2);
+    transition: transform 0.15s ease-out;
 }
-.faq details[open] summary::after { transform: rotate(180deg); }
+.faq details[open] summary::after { transform: rotate(45deg); }
 .faq-answer {
-    padding: 0 2px 14px;
+    padding: 0 2px 16px;
     font-size: 14px;
-    color: var(--text-3);
+    line-height: 1.65;
+    color: var(--text-2);
 }
 
-.copyright { font-size: 13px; margin-top: 4px; }
-.beian { font-size: 12px; margin-top: 8px; }
-.beian a { color: var(--text-3); }
+/* 页脚品牌行：№ 43 与 © 同排 */
+.foot-brand {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-top: 20px;
+    border-top: 1px solid var(--hairline);
+}
+.foot-no {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+}
+.copyright {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-2);
+}
+.beian {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    margin-top: 10px;
+    color: var(--text-2);
+}
+.beian a { color: var(--text-2); }
 .beian a:hover { color: var(--accent); }
 
-/* ---------- 43 彩蛋 ---------- */
+/* ---------- 43 彩蛋（随机文案入口） ---------- */
 .easter-egg {
-    margin: 22px auto 0;
-    max-width: 420px;
-    font-size: 12px;
-    color: var(--text-3);
-    opacity: 0.55;
+    margin: 28px 0 0;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--text-2);
+    opacity: 0.7;
     cursor: pointer;
-    transition: opacity 0.25s ease;
+    transition: color 0.15s ease-out, opacity 0.15s ease-out;
 }
-.easter-egg:hover { opacity: 0.9; }
+.easter-egg:hover { opacity: 1; color: var(--text-1); }
 
 /* ---------- Toast ---------- */
 .toast {
     position: fixed;
     left: 50%;
     bottom: 34px;
-    transform: translateX(-50%) translateY(20px);
-    z-index: 40;
+    transform: translateX(-50%) translateY(12px);
+    z-index: 300;
     max-width: 88vw;
-    padding: 10px 18px;
-    border-radius: 12px;
-    background: rgba(12, 12, 20, 0.9);
-    color: #fff;
-    font-size: 14px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    padding: 10px 16px;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    background: var(--surface);
+    color: var(--text-1);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.02em;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 .toast.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
 
-/* ---------- 43 全屏模式 ---------- */
+/* ============================================================
+   43 全屏模式（彩蛋专用，仅此一处保留轻微金辉）
+   ============================================================ */
 body.forty-three-mode .hero-title,
-body.forty-three-mode .hero-sub,
-body.forty-three-mode .post-text,
-body.forty-three-mode .post-tag,
-body.forty-three-mode .post-time,
+body.forty-three-mode .hero-no,
+body.forty-three-mode .hero-status-item,
 body.forty-three-mode .stream-head h2,
 body.forty-three-mode .stream-count,
-body.forty-three-mode .game-shell,
+body.forty-three-mode .post-no,
+body.forty-three-mode .post-time,
+body.forty-three-mode .post-tag,
+body.forty-three-mode .post-text,
+body.forty-three-mode .section-label,
+body.forty-three-mode .entry-no,
+body.forty-three-mode .entry-name,
+body.forty-three-mode .entry-status,
+body.forty-three-mode .entry-arrow,
 body.forty-three-mode .social-link,
 body.forty-three-mode .faq,
+body.forty-three-mode .foot-no,
 body.forty-three-mode .copyright,
 body.forty-three-mode .beian,
 body.forty-three-mode .easter-egg {
-    color: #ffdd44 !important;
-    text-shadow: 0 0 30px #ffdd44, 0 0 60px #ffaa00 !important;
+    color: var(--accent) !important;
+    text-shadow: 0 0 12px var(--accent) !important;
 }
-body.forty-three-mode .post-card {
-    border-color: rgba(255, 221, 68, 0.5) !important;
+body.forty-three-mode .post-item,
+body.forty-three-mode .entry {
+    border-color: var(--accent) !important;
 }
 
 /* ---------- 动效降级 ---------- */
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .hero-inner { animation: none; }
-    .post-card { transition: opacity 0.3s ease; transform: none; }
+    .hero-no.flip { animation: none; }
+    * { transition-duration: 0.01ms !important; }
 }
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 600px) {
-    .theme-toggle { top: 14px; right: 14px; width: 40px; height: 40px; font-size: 16px; }
-    .stream { padding: 30px 18px 60px; }
-    .stream-head h2 { font-size: 24px; }
-    .post-card { padding: 18px 18px; border-radius: 15px; }
-    .post-text { font-size: 15px; }
-    .footer { padding: 44px 18px 32px; }
-    .social-link { width: 40px; height: 40px; }
+    .hero { padding: 72px 16px 72px; }
+    .hero-plate { padding: 24px 20px 20px; }
+    .hero-title { font-size: 40px; }
+    .hero-status { gap: 12px 20px; }
+
+    .stream { padding: 0 16px 16px; }
+    .post-item { grid-template-columns: 1fr; gap: 8px; padding: 20px 0; }
+    .post-item:first-child::before { left: -8px; top: 20px; bottom: 20px; }
+    .post-side { flex-direction: row; align-items: baseline; gap: 12px; }
+
+    .entry { grid-template-columns: 40px 1fr auto; padding: 18px 2px; }
+    .entry-primary { padding: 24px 2px; }
+    .entry-status { grid-column: 2; grid-row: 2; }
+    .entry-arrow { grid-column: 3; grid-row: 1; }
+
+    .footer { padding: 56px 16px 32px; }
 }
 
-/* ---------- 实用工具面板 ---------- */
-.tools-view {
+/* ============================================================
+   实用工具面板
+   ============================================================ */
+.tools-view,
+.game-view {
     position: fixed;
     inset: 0;
     z-index: 200;
@@ -424,48 +548,66 @@ body.forty-three-mode .post-card {
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: var(--overlay);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
 }
-.tools-view.open { opacity: 1; visibility: visible; }
+.tools-view.open,
+.game-view.open { opacity: 1; visibility: visible; }
+.game-view { z-index: 210; }
 
-.tools-panel {
+.tools-panel,
+.game-panel {
     width: 100%;
-    max-width: 760px;
     max-height: 86vh;
     display: flex;
     flex-direction: column;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 20px;
-    box-shadow: var(--card-shadow);
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    box-shadow: var(--inset-hi) 0 1px 0 0 inset;
     overflow: hidden;
 }
-.tools-head {
+.tools-panel { max-width: 760px; }
+.game-panel { max-width: 580px; }
+
+.tools-head,
+.game-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--line);
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--hairline);
 }
-.tools-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; }
-.tools-close {
+.tools-title,
+.game-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}
+.tools-close,
+.game-close {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
-    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--hairline);
+    border-radius: 0;
     background: transparent;
     color: var(--text-2);
+    font-family: var(--font-mono);
     font-size: 18px;
     line-height: 1;
     cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease;
+    transition: color 0.15s ease-out, border-color 0.15s ease-out;
 }
-.tools-close:hover { color: var(--accent); border-color: var(--accent); }
+.tools-close:hover,
+.game-close:hover { color: var(--accent); border-color: var(--accent); }
+.tools-close:active,
+.game-close:active { transform: translateY(1px); }
 
 .tools-main {
     display: flex;
@@ -473,145 +615,106 @@ body.forty-three-mode .post-card {
     min-height: 0;
 }
 
+/* 工具侧栏：编号列表 */
 .tools-tabs {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    width: 168px;
+    gap: 2px;
+    width: 176px;
     flex: 0 0 auto;
     padding: 12px 10px;
-    border-right: 1px solid var(--line);
+    border-right: 1px solid var(--hairline);
     overflow-y: auto;
 }
 .tool-tab {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 10px;
     width: 100%;
-    padding: 10px 14px;
-    border-radius: 10px;
+    padding: 9px 12px;
     border: 1px solid transparent;
+    border-radius: 0;
     background: transparent;
     color: var(--text-2);
-    font-size: 13px;
+    font-family: var(--font-sans);
+    font-size: 14px;
     cursor: pointer;
     white-space: nowrap;
     text-align: left;
-    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.45s ease;
+    transition: color 0.15s ease-out, border-color 0.15s ease-out, background-color 0.3s ease-out;
 }
-.tool-tab:hover { color: var(--text-1); background: var(--shell-bg); }
-.tool-tab.active { color: var(--accent); border-color: var(--accent); background: var(--tag-bg); }
-.tool-tab i { width: 16px; text-align: center; }
+.tool-tab:hover { color: var(--text-1); background: var(--surface); }
+.tool-tab.active { color: var(--accent); border-color: var(--accent); }
+.tool-tab-no {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: inherit;
+}
 
 .tools-body { flex: 1; min-width: 0; padding: 18px 20px; overflow-y: auto; }
 
 /* 工具组件 */
 .tool-pane { display: flex; flex-direction: column; gap: 16px; }
 .tool-block { display: flex; flex-direction: column; gap: 8px; }
-.tool-label { font-size: 12px; color: var(--text-3); }
+.tool-label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; color: var(--text-2); }
 .tool-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
 .mini-btn {
     padding: 7px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--card-border);
-    background: var(--shell-bg);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    background: var(--surface);
     color: var(--text-1);
+    font-family: var(--font-sans);
     font-size: 13px;
     cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.45s ease;
+    transition: color 0.15s ease-out, border-color 0.15s ease-out, background-color 0.15s ease-out;
 }
 .mini-btn:hover { color: var(--accent); border-color: var(--accent); }
-.tool-area, .tool-input {
+.mini-btn:active { transform: translateY(1px); }
+.mini-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.tool-area,
+.tool-input {
     width: 100%;
     padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--card-border);
-    background: var(--shell-bg);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    background: var(--bg);
     color: var(--text-1);
-    font-family: "Courier New", monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     resize: vertical;
 }
-.tool-area:focus, .tool-input:focus { outline: none; border-color: var(--accent); }
-.tool-input { font-family: inherit; }
+.tool-area:focus,
+.tool-input:focus { outline: none; border-color: var(--accent); }
+.tool-input { font-family: var(--font-sans); }
+
 .tool-out {
     padding: 12px;
-    border-radius: 12px;
-    background: var(--shell-bg);
-    border: 1px solid var(--card-border);
-    font-family: "Courier New", monospace;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    background: var(--bg);
+    font-family: var(--font-mono);
     font-size: 13px;
+    line-height: 1.6;
     white-space: pre-wrap;
     word-break: break-all;
     min-height: 40px;
 }
-.mono { font-family: "Courier New", monospace; }
+.mono { font-family: var(--font-mono); }
 .tool-checks { display: flex; flex-wrap: wrap; gap: 14px; }
-.tool-checks label { font-size: 14px; color: var(--text-2); cursor: pointer; }
+.tool-checks label { font-size: 14px; color: var(--text-1); cursor: pointer; }
+.tool-checks input { accent-color: var(--accent); }
 .tool-range { width: 100%; accent-color: var(--accent); }
 .ip-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .ip-detail { font-size: 13px; color: var(--text-2); line-height: 1.8; word-break: break-all; }
-.err { color: #ff5555 !important; }
+.err { color: var(--rust) !important; }
 
-@media (max-width: 600px) {
-    .tools-view { padding: 10px; }
-    .tools-panel { max-height: 92vh; border-radius: 16px; }
-    .tools-tabs { width: 120px; padding: 10px 8px; }
-    .tool-tab { padding: 9px 10px; font-size: 12px; gap: 8px; }
-    .tools-body { padding: 14px; }
-}
-
-/* ---------- 小游戏面板（俄罗斯方块） ---------- */
-.game-view {
-    position: fixed;
-    inset: 0;
-    z-index: 210;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-.game-view.open { opacity: 1; visibility: visible; }
-
-.game-panel {
-    width: 100%;
-    max-width: 580px;
-    display: flex;
-    flex-direction: column;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 20px;
-    box-shadow: var(--card-shadow);
-    overflow: hidden;
-}
-.game-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--line);
-}
-.game-title { font-family: var(--font-display); font-weight: 700; font-size: 17px; }
-.game-close {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid var(--card-border);
-    background: transparent;
-    color: var(--text-2);
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease;
-}
-.game-close:hover { color: var(--accent); border-color: var(--accent); }
-
+/* ============================================================
+   小游戏面板（俄罗斯方块）
+   ============================================================ */
 .game-main {
     display: flex;
     gap: 16px;
@@ -624,9 +727,9 @@ body.forty-three-mode .post-card {
     min-width: 0;
     display: flex;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.28);
-    border: 1px solid var(--line);
-    border-radius: 12px;
+    background: var(--stage);
+    border: 1px solid var(--hairline);
+    border-radius: 0;
     padding: 10px;
 }
 .game-stage canvas {
@@ -646,35 +749,37 @@ body.forty-three-mode .post-card {
     display: flex;
     flex-direction: column;
     padding: 8px 12px;
-    background: var(--shell-bg);
-    border: 1px solid var(--line);
-    border-radius: 10px;
+    background: var(--bg);
+    border: 1px solid var(--hairline);
+    border-radius: 0;
 }
-.game-stat span { font-size: 11px; color: var(--text-3); }
-.game-stat strong { font-size: 20px; line-height: 1.2; color: var(--accent); font-family: var(--font-display); }
+.game-stat span { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text-2); }
+.game-stat strong { font-family: var(--font-mono); font-size: 20px; line-height: 1.2; color: var(--accent); font-weight: 400; }
 .game-next {
     display: flex;
     flex-direction: column;
     gap: 6px;
     padding: 8px 12px;
-    background: var(--shell-bg);
-    border: 1px solid var(--line);
-    border-radius: 10px;
+    background: var(--bg);
+    border: 1px solid var(--hairline);
+    border-radius: 0;
 }
-.game-next span { font-size: 11px; color: var(--text-3); }
+.game-next span { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text-2); }
 .game-next canvas { width: 80px; height: 80px; display: block; margin: 0 auto; }
+
 .game-btn {
     padding: 10px;
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
     background: transparent;
     color: var(--text-1);
     cursor: pointer;
-    font-family: inherit;
+    font-family: var(--font-sans);
     font-size: 13px;
-    transition: color 0.2s ease, border-color 0.2s ease;
+    transition: color 0.15s ease-out, border-color 0.15s ease-out;
 }
 .game-btn:hover { border-color: var(--accent); color: var(--accent); }
+.game-btn:active { transform: translateY(1px); }
 
 .game-overlay {
     position: absolute;
@@ -684,17 +789,16 @@ body.forty-three-mode .post-card {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: rgba(10, 10, 18, 0.82);
-    border-radius: 12px;
+    background: var(--overlay);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
     cursor: pointer;
 }
 .game-overlay.show { opacity: 1; visibility: visible; }
-.over-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--accent); letter-spacing: 0.1em; }
-.over-score { font-size: 14px; color: var(--text-1); }
-.over-hint { font-size: 12px; color: var(--text-3); }
+.over-title { font-family: var(--font-serif); font-size: 22px; font-weight: 400; color: var(--accent); letter-spacing: 0.02em; }
+.over-score { font-family: var(--font-mono); font-size: 14px; color: var(--text-1); }
+.over-hint { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; color: var(--text-2); }
 
 .game-controls {
     display: none;
@@ -706,16 +810,18 @@ body.forty-three-mode .post-card {
     flex: 1;
     max-width: 76px;
     height: 52px;
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    background: var(--shell-bg);
+    border: 1px solid var(--hairline);
+    border-radius: 0;
+    background: var(--surface);
     color: var(--text-1);
-    font-size: 22px;
+    font-family: var(--font-mono);
+    font-size: 20px;
     line-height: 1;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     touch-action: manipulation;
+    transition: color 0.15s ease-out, border-color 0.15s ease-out;
 }
 .game-controls button:active { border-color: var(--accent); color: var(--accent); }
 
@@ -723,8 +829,11 @@ body.forty-three-mode .post-card {
     .game-controls { display: flex; }
 }
 @media (max-width: 600px) {
-    .game-view { padding: 10px; }
-    .game-panel { max-height: 96vh; }
+    .tools-view, .game-view { padding: 10px; }
+    .tools-panel, .game-panel { max-height: 92vh; border-radius: 0; }
+    .tools-tabs { width: 128px; padding: 10px 8px; }
+    .tool-tab { padding: 9px 10px; font-size: 13px; gap: 8px; }
+    .tools-body { padding: 14px; }
     .game-main { flex-direction: column; align-items: center; }
     .game-stage { width: 100%; }
     .game-side { flex-direction: row; flex-wrap: wrap; justify-content: center; flex: 0 0 auto; width: 100%; }
