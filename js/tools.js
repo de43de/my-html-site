@@ -466,14 +466,14 @@
 
     // ---------- 工具注册 ----------
     const tools = [
-        { id: 'ip', name: 'IP 查询', html: ipHtml, init: initIp },
-        { id: 'json', name: 'JSON', html: jsonHtml, init: initJson },
-        { id: 'ts', name: '时间戳', html: tsHtml, init: initTs },
-        { id: 'b64', name: 'Base64', html: b64Html, init: initB64 },
-        { id: 'url', name: 'URL', html: urlHtml, init: initUrl },
-        { id: 'pwd', name: '密码', html: pwdHtml, init: initPwd },
-        { id: 'c43', name: '43 编码', html: c43Html, init: initC43 },
-        { id: 'pi', name: 'π 搜索', html: piHtml, init: initPi }
+        { id: 'ip', name: 'IP 查询', icon: 'fa-globe', html: ipHtml, init: initIp },
+        { id: 'json', name: 'JSON', icon: 'fa-code', html: jsonHtml, init: initJson },
+        { id: 'ts', name: '时间戳', icon: 'fa-clock', html: tsHtml, init: initTs },
+        { id: 'b64', name: 'Base64', icon: 'fa-shield-halved', html: b64Html, init: initB64 },
+        { id: 'url', name: 'URL', icon: 'fa-link', html: urlHtml, init: initUrl },
+        { id: 'pwd', name: '密码', icon: 'fa-key', html: pwdHtml, init: initPwd },
+        { id: 'c43', name: '43 编码', icon: 'fa-ghost', html: c43Html, init: initC43 },
+        { id: 'pi', name: 'π 搜索', icon: 'fa-magnifying-glass', html: piHtml, init: initPi }
     ];
 
     let activeId = 'ip';
@@ -481,10 +481,9 @@
     let activated = false;
 
     function renderTabs() {
-        tabsEl.innerHTML = tools.map(function (t, i) {
-            const n = (i + 1 < 10 ? '0' : '') + (i + 1);
+        tabsEl.innerHTML = tools.map(function (t) {
             return '<button class="tool-tab' + (t.id === activeId ? ' active' : '') + '" data-id="' + t.id + '">' +
-                '<span class="tool-tab-no">' + n + '</span><span>' + t.name + '</span></button>';
+                '<i class="fas ' + t.icon + '"></i> ' + t.name + '</button>';
         }).join('');
     }
 
