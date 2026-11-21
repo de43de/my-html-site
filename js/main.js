@@ -121,38 +121,10 @@
         cards.forEach(function (c) { c.classList.add('visible'); });
     }
 
-    // ---------- 主题切换 ----------
-    const themeToggle = document.getElementById('themeToggle');
-    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-
-    function applyTheme(theme, save) {
-        document.body.setAttribute('data-theme', theme);
-        const isCyber = theme === 'cyber';
-        themeToggle.innerHTML = isCyber ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-        themeToggle.title = isCyber ? '切换到极简' : '切换到赛博';
-        themeColorMeta.setAttribute('content', isCyber ? '#0a0a12' : '#f7f7f4');
-        if (save) { try { localStorage.setItem('dede-theme-v3', theme); } catch (e) {} }
-    }
-
-    let currentTheme = 'cyber';
-    try { currentTheme = localStorage.getItem('dede-theme-v3') || 'cyber'; } catch (e) {}
-    applyTheme(currentTheme, false);
-
-    themeToggle.addEventListener('click', function (e) {
-        e.stopPropagation();
-        currentTheme = currentTheme === 'cyber' ? 'minimal' : 'cyber';
-        applyTheme(currentTheme, true);
-        showToast(currentTheme === 'cyber' ? '已切换到赛博' : '已切换到极简');
-    });
-
     // ---------- 彩蛋入口按钮 ----------
     const eggBtn = document.getElementById('eggBtn');
     eggBtn.addEventListener('click', function (e) {
         e.stopPropagation();
-        if (currentTheme === 'minimal') {
-            showToast('极简模式没有彩蛋');
-            return;
-        }
         if (window.DEDE_EGG) {
             const rect = eggBtn.getBoundingClientRect();
             const nx = (rect.left + rect.width / 2) / window.innerWidth;
