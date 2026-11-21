@@ -338,6 +338,98 @@
         return null;
     }
 
+    // ---------- π 搜索 ----------
+    // 在 π 的小数（前 100 万位，js/pi.js 提供 window.PI_DIGITS）里搜索数字串，
+    // 给出首次出现的位置（小数点后第几位起，1 起始），并附上下文片段。
+    // π 数据约 1MB，首次打开该工具时按需加载，不影响首屏。
+    let piLoading = false, piCbs = [];
+    function loadPi(cb) {
+        if (window.PI_DIGITS) { cb(true); return; }
+        piCbs.push(cb);
+        if (piLoading) return;
+        piLoading = true;
+        const s = document.createElement('script');
+        s.src = 'js/pi.js';
+        s.onload = function () {
+            piLoading = false;
+            const ok = !!window.PI_DIGITS;
+            piCbs.forEach(function (f) { f(ok); });
+            piCbs = [];
+        };
+        s.onerror = function () {
+            piLoading = false;
+            piCbs.forEach(function (f) { f(false); });
+            piCbs = [];
+        };
+        document.head.appendChild(s);
+    }
+    function piHtml() {
+        return '<div class="tool-pane">' +
+            '<div class="tool-block"><div class="tool-label">在 π 的小数中搜索数字串（前 100 万位，位置为小数点后第几位、从 1 起）</div>' +
+            '<input id="piIn" class="tool-input" placeholder="如 43、520、19990815…" inputmode="numeric" spellcheck="false"></div>' +
+            '<div class="tool-row">' +
+            '<button class="mini-btn" data-act="search">搜索</button>' +
+            '<button class="mini-btn" data-act="next">下一个</button>' +
+            '<button class="mini-btn" data-act="clear">清空</button>' +
+            '</div>' +
+            '<div id="piOut" class="tool-out"></div></div>';
+    }
+    function initPi(root) {
+        const input = root.querySelector('#piIn');
+        const out = root.querySelector('#piOut');
+        let lastQuery = '', lastEnd = 0, searched = false;
+
+        function render() {
+            const q = input.value.trim();
+            if (!q) { out.textContent = '输入要搜索的数字串。'; out.classList.remove('err'); return; }
+            if (!/^\d+$/.test(q)) { out.textContent = '只支持纯数字串。'; out.classList.add('err'); return; }
+            if (!window.PI_DIGITS) { out.textContent = 'π 数据加载中，稍候再试…'; out.classList.remove('err'); return; }
+            const digits = window.PI_DIGITS;
+            const total = digits.length;
+            const from = (searched && q === lastQuery) ? lastEnd : 0;
+            const idx = digits.indexOf(q, from);
+            if (idx === -1) {
+                out.textContent = (from > 0)
+                    ? '已到末尾，前 ' + total + ' 位内没有更多「' + q + '」。'
+                    : '前 ' + total + ' 位内未找到「' + q + '」。';
+                out.classList.remove('err');
+                return;
+            }
+            searched = true;
+            lastQuery = q;
+            lastEnd = idx + 1;
+            const pos = idx + 1;
+            const a = Math.max(0, idx - 18);
+            const b = Math.min(total, idx + q.length + 18);
+            const ctx = (idx > 0 ? '…' : '') + digits.slice(a, idx) + '[' + q + ']' + digits.slice(idx + q.length, b) + (b < total ? '…' : '');
+            out.textContent = '第 ' + pos + ' 位起（第 ' + pos + '~' + (pos + q.length - 1) + ' 位）：\n' + ctx;
+            out.classList.remove('err');
+        }
+        function search() { searched = false; lastQuery = ''; lastEnd = 0; render(); }
+
+        root.querySelector('.tool-row').addEventListener('click', function (e) {
+            const btn = e.target.closest('.mini-btn');
+            if (!btn) return;
+            const act = btn.getAttribute('data-act');
+            if (act === 'search') search();
+            else if (act === 'next') render();
+            else if (act === 'clear') { input.value = ''; out.textContent = ''; out.classList.remove('err'); searched = false; lastQuery = ''; lastEnd = 0; }
+        });
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); search(); }
+        });
+
+        // 预加载 π 数据（约 1MB）
+        if (!window.PI_DIGITS) {
+            out.textContent = '正在加载 π 数据（约 1MB）…';
+            loadPi(function (ok) {
+                if (ok) out.textContent = '';
+                else { out.textContent = 'π 数据加载失败，请刷新重试。'; out.classList.add('err'); }
+            });
+        }
+        return null;
+    }
+
     // ---------- 工具注册 ----------
     const tools = [
         { id: 'ip', name: 'IP 查询', icon: 'fa-globe', html: ipHtml, init: initIp },
@@ -346,7 +438,8 @@
         { id: 'b64', name: 'Base64', icon: 'fa-shield-halved', html: b64Html, init: initB64 },
         { id: 'url', name: 'URL', icon: 'fa-link', html: urlHtml, init: initUrl },
         { id: 'pwd', name: '密码', icon: 'fa-key', html: pwdHtml, init: initPwd },
-        { id: 'c43', name: '43 编码', icon: 'fa-ghost', html: c43Html, init: initC43 }
+        { id: 'c43', name: '43 编码', icon: 'fa-ghost', html: c43Html, init: initC43 },
+        { id: 'pi', name: 'π 搜索', icon: 'fa-magnifying-glass', html: piHtml, init: initPi }
     ];
 
     let activeId = 'ip';
