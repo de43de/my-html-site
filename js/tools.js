@@ -339,33 +339,35 @@
     }
 
     // ---------- π 搜索 ----------
-    // 在 π 的小数（前 100 万位，js/pi.js 提供 window.PI_DIGITS）里搜索数字串，
+    // 在 π 的小数（前 1 亿位，js/pi0.txt ~ pi9.txt 十个分片拼接成 window.PI_DIGITS）里搜索数字串，
     // 给出首次出现的位置（小数点后第几位起，1 起始），并附上下文片段。
-    // π 数据约 1MB，首次打开该工具时按需加载，不影响首屏。
+    // 数据 10 个分片共约 100MB（传输时 gzip 压到约 40MB），首次打开该工具时按需加载，不影响首屏。
     let piLoading = false, piCbs = [];
+    const PI_CHUNKS = 10; // 1 亿位切成 10 个 1000 万位文件，规避单文件过大
     function loadPi(cb) {
         if (window.PI_DIGITS) { cb(true); return; }
         piCbs.push(cb);
         if (piLoading) return;
         piLoading = true;
-        const s = document.createElement('script');
-        s.src = 'js/pi.js';
-        s.onload = function () {
+        Promise.all(Array.from({ length: PI_CHUNKS }, function (_, i) {
+            return fetch('js/pi' + i + '.txt').then(function (r) {
+                if (!r.ok) throw new Error('http ' + r.status);
+                return r.text();
+            });
+        })).then(function (parts) {
+            window.PI_DIGITS = parts.join('');
             piLoading = false;
-            const ok = !!window.PI_DIGITS;
-            piCbs.forEach(function (f) { f(ok); });
+            piCbs.forEach(function (f) { f(true); });
             piCbs = [];
-        };
-        s.onerror = function () {
+        }).catch(function () {
             piLoading = false;
             piCbs.forEach(function (f) { f(false); });
             piCbs = [];
-        };
-        document.head.appendChild(s);
+        });
     }
     function piHtml() {
         return '<div class="tool-pane">' +
-            '<div class="tool-block"><div class="tool-label">在 π 的小数中搜索数字串（前 100 万位，位置为小数点后第几位、从 1 起）</div>' +
+            '<div class="tool-block"><div class="tool-label">在 π 的小数中搜索数字串（前 1 亿位，位置为小数点后第几位、从 1 起）</div>' +
             '<input id="piIn" class="tool-input" placeholder="如 43、520、19990815…" inputmode="numeric" spellcheck="false"></div>' +
             '<div class="tool-row">' +
             '<button class="mini-btn" data-act="search">搜索</button>' +
@@ -419,9 +421,9 @@
             if (e.key === 'Enter') { e.preventDefault(); search(); }
         });
 
-        // 预加载 π 数据（约 1MB）
+        // 预加载 π 数据（约 100MB，传输 gzip 压到约 40MB）
         if (!window.PI_DIGITS) {
-            out.textContent = '正在加载 π 数据（约 1MB）…';
+            out.textContent = '正在加载 π 数据（约 40MB，首次较慢，稍候）…';
             loadPi(function (ok) {
                 if (ok) out.textContent = '';
                 else { out.textContent = 'π 数据加载失败，请刷新重试。'; out.classList.add('err'); }
